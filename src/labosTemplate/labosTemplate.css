@@ -1,0 +1,16 @@
+#labos-jumbotron {
+    background-image: url("../imgs/LogoTransparent@2x.png");
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: black;
+    margin-top: 5%;
+}
+
+.labos-btn-custom {
+    color: white;
+    background-color: black;
+    margin-left: 5px;
+    margin-right: 5px;
+}

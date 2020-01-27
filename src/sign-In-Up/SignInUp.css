@@ -1,0 +1,17 @@
+#sign-in-header {
+    background-color: rgb(49, 54, 203);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15%;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+#sign-in-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    background-color: cornsilk;
+}

@@ -1,0 +1,99 @@
+#users-jumbotron {
+    background-image: url("../imgs/LogoTransparent@2x.png");
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: rgb(49, 54, 203);
+    margin-top: 5%;
+}
+
+#buy-ether {
+    background-image: url(../imgs/buyEther.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    border: none;
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    vertical-align: middle;
+}
+
+.btn-custom {
+    color: white;
+    background-color: rgb(49, 54, 203);
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.btn-custom:hover {
+    color: white;
+    background-color: rgb(56, 56, 243);
+}
+
+.btn-custom:focus {
+    color: white;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 10px solid #9b9696;
+  border-radius: 50%;
+  border-top: 10px solid #3498db;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+#analyses-template-panel {
+  border-radius: 20px;
+  margin: 5px;
+}
+
+#analyses-template-header {
+  color: azure;
+  padding: 10px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+#analyses-template-footer {
+  color: azure;
+  padding: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
