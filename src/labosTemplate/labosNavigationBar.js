@@ -8,14 +8,14 @@ const labosNavigationBar = (props) => {
         <div>
           <div>
             <div>
-              <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }}>
+              <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={ props.postAnalyse }>
                 Post Analyse
               </button>
-              <button className="btn labos-btn-custom btn-lg">
+              <button className="btn labos-btn-custom btn-lg" onClick={ props.postedAnalyses }>
                 My Posted Analyses
               </button>
-              <button className="btn labos-btn-custom btn-lg">
-                Private Analyses
+              <button className="btn labos-btn-custom btn-lg" onClick={ props.boughtAnalyses }>
+                Bought Analyses
               </button>
             </div>
           </div>

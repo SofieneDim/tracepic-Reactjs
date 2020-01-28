@@ -88,7 +88,7 @@ const SignIn = (props) => {
                                                     <p id="keyStoreResult_key" style={{ wordBreak: 'break-all' }}></p><br />
                                                 </div>
                                             </div>
-                                            <a href="#">Private_Key Forgotten</a>
+                                            <a >Private_Key Forgotten</a>
                                         </div>
                                         <div className="col-md-1"></div>
                                     </div>

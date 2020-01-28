@@ -6,8 +6,7 @@ const analysesTemplate = props => {
     return (
         <div id="analyses-template-panel" style={{ border: '3px solid ' + props.color }}>
             <div id="analyses-template-header" style={{ backgroundColor: props.color }}>
-
-                <span id="analyse-panel-title">{props.analyse.id}</span>
+                <span id="analyse-panel-title">{props.analyse.analyseReference}</span>
             </div>
             {props.laboMode ?
                 <div style={{ padding: '10px' }}>

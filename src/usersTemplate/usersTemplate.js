@@ -56,7 +56,7 @@ class UsersTemplate extends Component {
 
         for (let i = 0; i < analyses.length; i++) {
 
-            if (analyses[i][2] == this.props.accountAddress) {
+            if (analyses[i][2] === this.props.accountAddress) {
                 selfBougthAnalyses.push(analyses[i])
             }
         }
@@ -83,10 +83,6 @@ class UsersTemplate extends Component {
         //console.log(await this.props.contract.methods.analyses(_id).call())
     }
 
-    analysesSortDisplay(forSale) {
-        this.setState({ showAnalysesForSale: forSale })
-    }
-
     render() {
 
         const analysesLeftRow = (
@@ -100,7 +96,6 @@ class UsersTemplate extends Component {
                         description={analyse.description}
                         buyAnalyse={() => this.buyAnalyse(analyse.id, analyse.price)}
                     />
-                    return null
                 })}
             </div>
         )
@@ -115,7 +110,6 @@ class UsersTemplate extends Component {
                         description={analyse.description}
                         buyAnalyse={() => this.buyAnalyse(analyse.id, analyse.price)}
                     />
-                    return null
                 })}
             </div>
         )
@@ -130,7 +124,6 @@ class UsersTemplate extends Component {
                         description={analyse.description}
                         buyAnalyse={() => this.buyAnalyse(analyse.id, analyse.price)}
                     />
-                    return null
                 })}
             </div>
         )
@@ -157,8 +150,8 @@ class UsersTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
-                    forSale={() => this.analysesSortDisplay(true)}
-                    selfBought={() => this.analysesSortDisplay(false)}
+                    forSale={() => this.setState({ showAnalysesForSale: true })}
+                    selfBought={() => this.setState({ showAnalysesForSale: false })}
                 />
                 {this.state.showAnalysesForSale ?
                     <div className="row" style={{ marginTop: '30px' }}>

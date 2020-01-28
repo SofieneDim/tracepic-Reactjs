@@ -25,7 +25,7 @@ class App extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.initContract()
   }
 
@@ -36,15 +36,15 @@ class App extends Component {
     this.setState({ contractInstance })
   }
 
-  async loadAccountInfo(){
+  async loadAccountInfo() {
     // if (this.statemetamaskExist){
     // const accounts = await web3.eth.getAccounts()
     // const balance = await web3.eth.getBalance(accounts[0])
     // this.setState({ accountAddress: accounts[0], balance })
     // } else {
-      let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
-      balance = this.state.web3.utils.fromWei(balance, "ether")
-      this.setState({ accountAddress: this.state.signinAddress, balance })
+    let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
+    balance = this.state.web3.utils.fromWei(balance, "ether")
+    this.setState({ accountAddress: this.state.signinAddress, balance })
     // }
   }
 
@@ -109,28 +109,29 @@ class App extends Component {
               analyses={this.state.analyses}
               balance={this.state.balance}
               accountAddress={this.state.accountAddress}
+              contract={this.state.contractInstance}
             />
         }
       </div>
-    )
-  }
-
+      )
+    }
+  
   labosMode() {
-    this.labosMode = true
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
-
+          this.labosMode = true
+    this.setState({accessApproved: true })
+        this.loadAnalyses()
+      }
+    
   usersMode() {
-    this.labosMode = false
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
-
-
+          this.labosMode = false
+    this.setState({accessApproved: true })
+        this.loadAnalyses()
+      }
+    
+    
   signinInputChanged(key, value) {
-    this.setState({ [key]: value })
-  }
-}
-
-export default App;
+          this.setState({ [key]: value })
+        }
+        }
+        
+        export default App;
