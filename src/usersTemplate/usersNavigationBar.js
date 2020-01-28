@@ -8,10 +8,10 @@ const navigationBar = (props) => {
         <div>
           <div>
             <div>
-              <button className="btn btn-custom btn-lg" style={{ float: 'right' }}>
+              <button className="btn btn-custom btn-lg" onClick={props.forSale}>
                 Analyses for Sale
               </button>
-              <button className="btn btn-custom btn-lg">
+              <button className="btn btn-custom btn-lg" onClick={props.selfBought} style={{ backgroundColor: 'rgb(13, 105, 244)' }} >
                 My Bought Analyses
               </button>
               <button className="btn btn-custom btn-lg">
