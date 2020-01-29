@@ -19,7 +19,7 @@ class labosTemplate extends Component {
             analyseDescription: '',
             analyseValue: '',
             isPrivate: false,
-            secretCode: ''
+            secretCode: 0
         }
     }
 
@@ -87,7 +87,7 @@ class labosTemplate extends Component {
             }
             this.setState({ secretCode })
         } else {
-            this.setState({ secretCode: '' })
+            this.setState({ secretCode: 0 })
         }
     }
 

@@ -45,7 +45,7 @@ const postAnalyse = props => {
                                     <span className="slider round" />
                                 </label>
                             </div>
-                            <h3>{ props.secretCode }</h3>
+                            {  props.secretCode  !== 0 ? <h3>{ props.secretCode }</h3> : null}
                         </div>
                         <div style={{ marginTop: '20px', marginBottom: "20px", float: "right" }}>
                             <button type="submit" class="btn btn-primary btn-success">Submit</button>
