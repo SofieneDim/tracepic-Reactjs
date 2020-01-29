@@ -12,7 +12,7 @@ const SignIn = (props) => {
             <Helmet>
                 <style>{'body { background-color: rgb(49, 54, 203, 0.9); }'}</style>
             </Helmet>
-            
+
             <div className="row">
                 <div className="col-md-12">
                     <div id="sign-in-header">
@@ -21,7 +21,7 @@ const SignIn = (props) => {
                 </div>
                 <div className="col-md-12">
                     <div className="row" id="sign-inBody" style={{ backgroundColor: 'white' }}>
-                    <div className="col-md-1"></div>
+                        <div className="col-md-1"></div>
                         <div className="col-md-3 centered">
                             <img src={signinImage} alt="" />
                         </div>
@@ -38,7 +38,7 @@ const SignIn = (props) => {
                                                         id="signIn-account-address"
                                                         placeholder="Enter your address"
                                                         onChange={props.addressChanged}
-                                                        />
+                                                    />
                                                     <small id="emailHelp" className="form-text text-muted">Address must begin with: 0x</small>
                                                 </div>
                                                 <div className="form-group" style={{ marginTop: '20px' }}>
@@ -96,12 +96,14 @@ const SignIn = (props) => {
                                 <div className="modal-footer">
                                     <h3 id="signin_warning" style={{ color: 'red' }}></h3>
 
-                                    <button className="btn btn-primary" type="button" 
-                                        style={{ backgroundColor: '#3384CC' }}>Sign Up</button>
+                                    <button className="btn btn-primary" type="button"
+                                        style={{ backgroundColor: '#3384CC' }} onClick={props.develop}
+                                    >Sign Up</button>
 
                                     <button className="btn btn-primary signin_botton" type="submit"
                                         onClick={props.click}
-                                        style={{ backgroundColor: '#3333CC' }}>Connect</button>
+                                        style={{ backgroundColor: '#3333CC' }}
+                                    >Connect</button>
 
                                     <div className="centered">
                                         <button className="btn btn-primary" style={{ display: 'none', backgroundColor: '#3333CC' }}>Done!</button>

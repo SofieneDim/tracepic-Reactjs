@@ -14,7 +14,7 @@ const navigationBar = (props) => {
               <button className="btn btn-custom btn-lg" onClick={props.selfBought} style={{ backgroundColor: 'rgb(13, 105, 244)' }} >
                 My Bought Analyses
               </button>
-              <button className="btn btn-custom btn-lg">
+              <button className="btn btn-custom btn-lg" onClick={props.privateAnalyse}  style={{ float: "right" }}>
                 Private Analyses
               </button>
             </div>
@@ -37,7 +37,7 @@ const navigationBar = (props) => {
         </div>
 
         <div className="centered" style={{ marginTop: '20px', color: 'red', textAlign: 'center', display: 'none' }}>
-          <h4 id="analyse-not-found">Sorry! <br/> there is no analyse with that reference</h4>
+          <h4 id="analyse-not-found">Sorry! <br /> there is no analyse with that reference</h4>
         </div>
       </div>
     </div>

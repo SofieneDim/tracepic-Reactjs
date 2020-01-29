@@ -3,9 +3,11 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 
-import LabosTemplate from './labosTemplate/labosTemplate'
-import UsersTemplate from './usersTemplate/usersTemplate'
-import SignIn from './sign-In-Up/signIn'
+import LabosTemplate from './LabosTemplate/labosTemplate'
+import UsersTemplate from './UsersTemplate/usersTemplate'
+import SignIn from './Sign-In-Up/signIn'
+
+
 
 class App extends Component {
 
@@ -25,6 +27,21 @@ class App extends Component {
     }
   }
 
+
+  developSigninHandler() {
+
+    if (true) {
+
+      this.setState({ accountAddress: "0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4" })
+      this.labosMode()
+    } else {
+      this.setState({ accountAddress: "0x022c47EDdCea320fcf406eBAed22D926243FeaF9" })
+      this.usersMode()
+    }
+    this.loadAccountInfo()
+  }
+
+
   componentDidMount() {
     this.initContract()
   }
@@ -42,9 +59,11 @@ class App extends Component {
     // const balance = await web3.eth.getBalance(accounts[0])
     // this.setState({ accountAddress: accounts[0], balance })
     // } else {
-    let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
-    balance = this.state.web3.utils.fromWei(balance, "ether")
-    this.setState({ accountAddress: this.state.signinAddress, balance })
+
+    // let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
+    // balance = this.state.web3.utils.fromWei(balance, "ether")
+    // this.setState({ accountAddress: this.state.signinAddress, balance })
+
     // }
   }
 
@@ -90,48 +109,52 @@ class App extends Component {
       <div className="container">
         {!this.state.accessApproved ?
           <SignIn
+
+          develop={this.developSigninHandler.bind(this)} //*****************
+
             click={this.signin.bind(this)}
             addressChanged={(event) => { this.signinInputChanged("signinAddress", event.target.value) }}
             emailChanged={(event) => { this.signinInputChanged("signinEmail", event.target.value) }}
-            passwordChanged={(event) => { this.signinInputChanged("signinPassword", event.target.value) }} />
+            passwordChanged={(event) => { this.signinInputChanged("signinPassword", event.target.value) }}
+             />
 
           : !this.labosMode ?
             <UsersTemplate
               contract={this.state.contractInstance}
-              analyses={this.state.analyses}
-              balance={this.state.balance}
-              accountAddress={this.state.accountAddress} 
-              web3={this.state.web3}
-              reloadAccountInfo={this.loadAccountInfo.bind(this)}
-              />
-            :
-            <LabosTemplate
-              analyses={this.state.analyses}
+              analyses={this.state.analyses.reverse()}
               balance={this.state.balance}
               accountAddress={this.state.accountAddress}
+              reloadAccountInfo={this.loadAccountInfo.bind(this)}
+            />
+            :
+            <LabosTemplate
+              analyses={this.state.analyses.reverse()}
+              balance={this.state.balance}
               contract={this.state.contractInstance}
+              accountAddress={this.state.accountAddress}
+              reloadAnalyses={this.loadAnalyses.bind(this)}
             />
         }
       </div>
-      )
-    }
-  
+    )
+  }
+
   labosMode() {
-          this.labosMode = true
-    this.setState({accessApproved: true })
-        this.loadAnalyses()
-      }
-    
+    this.labosMode = true
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
   usersMode() {
-          this.labosMode = false
-    this.setState({accessApproved: true })
-        this.loadAnalyses()
-      }
-    
-    
+    this.labosMode = false
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
+
   signinInputChanged(key, value) {
-          this.setState({ [key]: value })
-        }
-        }
-        
-        export default App;
+    this.setState({ [key]: value })
+  }
+}
+
+export default App;

@@ -32,14 +32,24 @@ const postAnalyse = props => {
                             </div>
                         </div>
                         <label className="centered">Description</label>
-                        <textarea type="text" class="form-control vresize"
+                        <textarea type="text" className="form-control vresize"
                             id="post-analyse-description"
                             placeholder="Describe your analyse"
                             onChange={props.descriptionChanged}
                             required></textarea>
+                        <h3 style={{ marginTop: "10px" }}>Make it private analyse</h3>
+                        <div class="row">
+                            <div className="col-md-2">
+                                <label className="switch">
+                                    <input type="checkbox" onClick={ props.checkboxSwiched }/>
+                                    <span className="slider round" />
+                                </label>
+                            </div>
+                            <h3>{ props.secretCode }</h3>
+                        </div>
                         <div style={{ marginTop: '20px', marginBottom: "20px", float: "right" }}>
                             <button type="submit" class="btn btn-primary btn-success">Submit</button>
-                            <button type="button" class="btn">Close</button>
+                            <button type="button" class="btn" onClick={ props.cancel }>Close</button>
                         </div>
                     </div>
                 </div>
