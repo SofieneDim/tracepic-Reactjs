@@ -29,12 +29,13 @@ class labosTemplate extends Component {
         const _price = Web3.utils.toWei(this.state.analysePrice, "ether")
         const _description = this.state.analyseDescription
         const _value = this.state.analyseValue
+        const _secretCode = this.state.secretCode
         const _date = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear() +
             " " + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
 
         try {
             const trasactionReceipt = await this.props.contract.methods
-                .sellAnalyse(_reference, _value, _date, _description, _price, 0)
+                .sellAnalyse(_reference, _value, _date, _description, _price, _secretCode)
                 .send({ from: '0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4', gas: 20000000 })
             console.log('trasactionReceipt:', trasactionReceipt)
             this.setState({ showAnalyse: true })
