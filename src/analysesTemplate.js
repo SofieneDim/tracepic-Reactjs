@@ -6,7 +6,7 @@ const analysesTemplate = props => {
     return (
         <div id="analyses-template-panel" style={{ border: '3px solid ' + props.color }}>
             <div id="analyses-template-header" style={{ backgroundColor: props.color }}>
-                <span id="analyse-panel-title">{props.analyse.id}</span>
+                <strong><span id="analyse-panel-title">Reference: {props.analyse.analyseReference}</span></strong>
             </div>
             {props.laboMode ?
                 <div style={{ padding: '10px' }}>
@@ -27,8 +27,8 @@ const analysesTemplate = props => {
                     <button type="button" className="btn btn-primary btn-success" onClick={props.buyAnalyse}>Buy</button>
                     : null
                 }
-                <span id="analyse-note">{props.note}</span>
-                <span id="analyse-state">{props.state}</span>
+                <strong><span id="analyse-note">{props.note}</span></strong>
+                <strong><span id="analyse-state">{props.state}</span></strong>
             </div>
         </div>
     )

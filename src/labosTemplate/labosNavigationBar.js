@@ -8,21 +8,22 @@ const labosNavigationBar = (props) => {
         <div>
           <div>
             <div>
-              <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={ props.postAnalyse }>
+              <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.postAnalyse}>
                 Post Analyse
               </button>
-              <button className="btn labos-btn-custom btn-lg" onClick={ props.postedAnalyses }>
+              <button className="btn labos-btn-custom btn-lg" onClick={props.postedAnalyses}>
                 My Posted Analyses
               </button>
-              <button className="btn labos-btn-custom btn-lg" onClick={ props.boughtAnalyses }>
+              <button className="btn labos-btn-custom btn-lg" style={{ backgroundColor: 'grey' }} onClick={props.boughtAnalyses}>
                 Bought Analyses
               </button>
             </div>
           </div>
         </div>
         <div className="centered">
-          <form >
+          <form onSubmit={props.searchAnalyse}>
             <input type="text" className="form-control" placeholder="Search by reference..."
+            onChange={props.analyseSearchChange}
               style={{ border: '1px solid black', marginTop: '20px' }} required />
             <input type="submit" style={{ display: 'none' }} />
           </form>
@@ -37,7 +38,7 @@ const labosNavigationBar = (props) => {
         </div>
 
         <div className="centered" style={{ marginTop: '20px', color: 'red', textAlign: 'center', display: 'none' }}>
-          <h4 id="analyse-not-found">Sorry! <br/> there is no analyse with that reference</h4>
+          <h4 id="analyse-not-found">Sorry! <br /> there is no analyse with that reference</h4>
         </div>
       </div>
     </div>

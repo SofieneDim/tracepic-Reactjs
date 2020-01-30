@@ -252,11 +252,6 @@ export const TRACEPIC_ABI = [
         "internalType": "uint256",
         "name": "_id",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "_privateAnalyse",
-        "type": "bool"
       }
     ],
     "name": "buyAnalyse",
@@ -431,6 +426,27 @@ export const TRACEPIC_ABI = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
+      }
+    ],
+    "name": "getAnalyseByReference",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
       }
     ],
     "payable": false,

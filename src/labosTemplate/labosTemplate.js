@@ -19,7 +19,7 @@ class labosTemplate extends Component {
             analyseDescription: '',
             analyseValue: '',
             isPrivate: false,
-            secretCode: 0
+            secretCode: 0,
         }
     }
 
@@ -46,6 +46,7 @@ class labosTemplate extends Component {
     }
 
     getAnalyseValue() {
+        this.setState({ secretCode: 0 })
         this.setState({ showAnalyse: false })
         var url = 'http://localhost:8081/';
         var xhttp = new XMLHttpRequest();
@@ -71,18 +72,18 @@ class labosTemplate extends Component {
         }.bind(this)
     }
 
-    async checkboxHandler(){
-        this.setState({ isPrivate: !this.state.isPrivate})
-        setTimeout(() => {this.manageSecretCode()}, 200)
+    async checkboxHandler() {
+        this.setState({ isPrivate: !this.state.isPrivate })
+        setTimeout(() => { this.manageSecretCode() }, 200)
     }
 
-    async manageSecretCode(){
+    async manageSecretCode() {
         console.log('this.state.isPrivate:', this.state.isPrivate)
-        
-        if(this.state.isPrivate){
+
+        if (this.state.isPrivate) {
             let secretCode = parseInt(Math.random() * 10000);
             let _validSecret = await this.props.contract.methods.secretValid(secretCode).call();
-            while (secretCode < 1000 || secretCode > 9999 || !_validSecret){
+            while (secretCode < 1000 || secretCode > 9999 || !_validSecret) {
                 secretCode = parseInt(Math.random() * 10000);
                 _validSecret = await this.props.contract.methods.secretValid(secretCode).call();
             }
@@ -92,8 +93,28 @@ class labosTemplate extends Component {
         }
     }
 
-    cancelPostHandler(){
+    cancelPostHandler() {
         console.log('this.state.isPrivate 2:', this.state.isPrivate)
+    }
+
+    async searchAnalyse(event) {
+        event.preventDefault()
+
+        const analyseId = await this.props.contract.methods
+            .getAnalyseByReference(this.state.analyseSearchReference).call()
+        if (analyseId == 0) { return console.log('analyse not found!') }
+        const analyse = await this.props.contract.methods.analyses(analyseId).call()
+
+        const searchAnalyseResult = (
+            <div>
+                <AnalysesTemplate
+                    analyse={analyse}
+                    laboMode={true}
+                    color={'green'}
+                />
+            </div>
+        )
+        this.setState({ searchAnalyseResult })
     }
 
     render() {
@@ -102,13 +123,44 @@ class labosTemplate extends Component {
             <div>
                 {
                     this.props.analyses.map((analyse) => {
-                        return <AnalysesTemplate
-                            analyse={analyse}
-                            key={analyse.id}
-                            laboMode={true}
-                            color={'black'}
-                            description={analyse.description}
-                        />
+                        console.log('analyse:', analyse.secret)
+                        return this.state.showSelfPosted ?
+                            <AnalysesTemplate
+                                analyse={analyse}
+                                key={analyse.id}
+                                laboMode={true}
+                                color={'black'}
+                                note={
+                                    analyse.buyer !== "0x0000000000000000000000000000000000000000"
+                                        ? "Sold by: " + analyse.buyer
+                                        : "Not sold yet"
+                                }
+                                state={
+                                    analyse.secret !== "0"
+                                        ? "Private analyse"
+                                        : "Public analyse"
+                                }
+                                description={analyse.description}
+                            />
+                            : analyse.buyer !== "0x0000000000000000000000000000000000000000" ?
+                                <AnalysesTemplate
+                                    analyse={analyse}
+                                    key={analyse.id}
+                                    laboMode={true}
+                                    color={'grey'}
+                                    note={
+                                        analyse.buyer !== "0x0000000000000000000000000000000000000000"
+                                            ? "Sold by: " + analyse.buyer
+                                            : "Not sold yet"
+                                    }
+                                    state={
+                                        analyse.secret !== "0"
+                                            ? "Private analyse"
+                                            : "Public analyse"
+                                    }
+                                    description={analyse.description}
+                                />
+                                : null
                     })
                 }
             </div>
@@ -119,17 +171,25 @@ class labosTemplate extends Component {
                 <div className="jumbotron" id="labos-jumbotron"></div>
                 <NavigationBar
                     postAnalyse={this.getAnalyseValue.bind(this)}
-                    postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true })}
-                    boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false })}
+                    postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
+                    boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
+                    searchAnalyse={this.searchAnalyse.bind(this)}
+                    analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                 />
+                {this.state.searchAnalyseResult}
                 {this.state.showAnalyse ?
                     this.state.showSelfPosted ?
-                        <div className="row" style={{ marginTop: '30px' }}>
+                        <div className="row aa" style={{ marginTop: '30px' }}>
                             <div className="col-md-12" style={{ padding: '0px' }}>
                                 {analyses}
                             </div>
                         </div>
-                        : null
+                        : 
+                        <div className="row bb" style={{ marginTop: '30px' }}>
+                            <div className="col-md-12" style={{ padding: '0px' }}>
+                                {analyses}
+                            </div>
+                        </div>
                     :
                     <div className="row" style={{ marginTop: '30px' }}>
                         <div class="col-md-2"></div>
@@ -137,7 +197,7 @@ class labosTemplate extends Component {
                             <PostAnalyse
                                 submit={this.postAnalyse.bind(this)}
                                 cancel={this.cancelPostHandler.bind(this)}
-                                secretCode={ this.state.secretCode }
+                                secretCode={this.state.secretCode}
                                 analyseValue={this.state.analyseValue}
                                 checkboxSwiched={() => this.checkboxHandler()}
                                 referenceChanged={(event) => this.setState({ reference: event.target.value })}

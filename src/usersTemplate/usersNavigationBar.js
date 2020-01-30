@@ -14,16 +14,19 @@ const navigationBar = (props) => {
               <button className="btn btn-custom btn-lg" onClick={props.selfBought} style={{ backgroundColor: 'rgb(13, 105, 244)' }} >
                 My Bought Analyses
               </button>
-              <button className="btn btn-custom btn-lg" onClick={props.privateAnalyse}  style={{ float: "right" }}>
+              <button className="btn btn-custom btn-lg" onClick={props.privateAnalyse} style={{ float: "right" }}>
                 Private Analyses
               </button>
             </div>
           </div>
         </div>
         <div className="centered">
-          <form >
-            <input type="text" className="form-control" placeholder="Search by reference..."
-              style={{ border: '1px solid blue', marginTop: '20px' }} required />
+          <form onSubmit={props.searchAnalyse}>
+            <input type="text" className="form-control"
+              placeholder="Search by reference..."
+              onChange={props.analyseSearchChange}
+              style={{ border: '1px solid blue', marginTop: '20px' }} required
+            />
             <input type="submit" style={{ display: 'none' }} />
           </form>
         </div>

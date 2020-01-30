@@ -18,7 +18,8 @@ class UsersTemplate extends Component {
             showAnalysesForSale: true,
             boughtAnalyseResult: null,
             privateAnalyseResult: null,
-            secretCode: ''
+            secretCode: '',
+            showPrivateSearch: false
         }
         this.loadAnalyses()
     }
@@ -47,12 +48,14 @@ class UsersTemplate extends Component {
         const analyses = this.state.analyses
         const selfBougthAnalyses = []
         let analysesLeftIndex = []
-        let analysesRightIndex = []
+        let analysesRightIndex = []                                       //******************************
         for (let i = 0; i < this.state.analysesForSale.length; i++) {
-            if (i % 2 === 0) {
-                analysesLeftIndex.push(this.state.analysesForSale[i])
-            } else {
-                analysesRightIndex.push(this.state.analysesForSale[i])
+            if (analyses[i].secret == 0) {
+                if (i % 2 === 0) {
+                    analysesLeftIndex.push(this.state.analysesForSale[i])
+                } else {
+                    analysesRightIndex.push(this.state.analysesForSale[i])
+                }
             }
         }
         for (let i = 0; i < analyses.length; i++) {
@@ -66,7 +69,7 @@ class UsersTemplate extends Component {
     async buyAnalyse(_id, _price) {
         try {
             const transactionReceipt = await this.props.contract.methods
-                .buyAnalyse(_id, true).send({
+                .buyAnalyse(_id).send({
                     from: this.props.accountAddress,
                     value: _price
                 })
@@ -77,32 +80,16 @@ class UsersTemplate extends Component {
         this.showBoughtAnalyseResult(_id)
         this.loadAnalyses()
         this.props.reloadAccountInfo()
-        this.setState({ showAnalysesForSale: false })
-    }
-
-    async buyPrivateAnalyse(_id, _price){
-        try {
-            const transactionReceipt = await this.props.contract.methods
-                .buyAnalyse(_id, false).send({
-                    from: this.props.accountAddress,
-                    value: 2000000000000000000
-                })
-            console.log('transactionReceipt:', transactionReceipt)
-        } catch (error) {
-            return console.log(error)
-        }
-        this.showBoughtAnalyseResult(_id)
-        this.loadAnalyses()
-        this.props.reloadAccountInfo()
+        this.setState({ privateAnalyseResult: null })
         this.setState({ showAnalysesForSale: false })
     }
 
     async showBoughtAnalyseResult(_id) {
-        const _analyse = await this.props.contract.methods.analyses(_id).call()
+        const analyse = await this.props.contract.methods.analyses(_id).call()
         const boughtAnalyseResult = (
             <div>
                 <AnalysesTemplate
-                    analyse={_analyse}
+                    analyse={analyse}
                     laboMode={true}
                     color={'green'}
                 />
@@ -112,34 +99,53 @@ class UsersTemplate extends Component {
         window.scrollTo(0, 0)
     }
 
-    //*******************************//
-    //*******************************//
-    //*******************************//
-    async getPrivateAnalyse(event) {
+    async getPrivateAnalyseHandler(event) {
         event.preventDefault()
 
-        const _analyse = await this.props.contract.methods.privateAnalyses(this.state.secretCode).call()
-        let privateAnalyseResult = null
-
-        console.log('_analyse:', _analyse)
-
-        _analyse.id == 0 ? console.log("analyse not found") :
-
-            privateAnalyseResult = (
+        console.log('event:', this.state.secretCode)
+        const privateAnalyseResult = await this.props.contract.methods.privateAnalyses(this.state.secretCode).call()
+        console.log('privateAnalyseResult:', privateAnalyseResult)
+        if (privateAnalyseResult.id == 0) {
+            console.log("analyse not found")
+        } else {
+            const searchAnalyseResult = (
                 <div>
                     <AnalysesTemplate
-                        analyse={_analyse}
+                        analyse={privateAnalyseResult}
                         laboMode={false}
                         color={'rgba(67, 64, 241, 0.911)'}
-                        buyAnalyse={() => this.buyPrivateAnalyse(_analyse.id, _analyse.price)}
+                        buyAnalyse={() => this.buyAnalyse(privateAnalyseResult.id, privateAnalyseResult.price)}
                     />
                 </div>
             )
-        this.setState({ privateAnalyseResult })
+            this.setState({ searchAnalyseResult })
+        }
     }
 
     secretCodeHandler(event) {
         this.setState({ secretCode: event.target.value })
+    }
+
+    async searchAnalyse(event) {
+        event.preventDefault()
+
+        const analyseId = await this.props.contract.methods
+            .getAnalyseByReference(this.state.analyseSearchReference).call()
+        if (analyseId == 0) { return console.log('analyse not found!') }
+        const analyse = await this.props.contract.methods.analyses(analyseId).call()
+        if (analyse.secret !== "0") { return console.log('this is a private analyse!') }
+
+        const searchAnalyseResult = (
+            <div>
+                <AnalysesTemplate
+                    analyse={analyse}
+                    laboMode={false}
+                    color={'rgba(67, 64, 241, 0.911)'}
+                    buyAnalyse={() => this.buyAnalyse(analyse.id, analyse.price)}
+                />
+            </div>
+        )
+        this.setState({ searchAnalyseResult })
     }
 
     render() {
@@ -206,42 +212,46 @@ class UsersTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
-                    forSale={() => this.setState({ showAnalysesForSale: true })}
-                    selfBought={() => this.setState({ showAnalysesForSale: false })}
-                    privateAnalyse={() => this.setState({ showAnalysesForSale: false })}
+                    forSale={() => this.setState({ showAnalysesForSale: true, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null })}
+                    selfBought={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null })}
+                    privateAnalyse={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: true, searchAnalyseResult: null, boughtAnalyseResult: null })}
+                    searchAnalyse={this.searchAnalyse.bind(this)}
+                    analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                 />
-
-                <div className="row" style={{ marginTop: "50px" }}>
-                    <div className="col-md-12 centered">
-                        <p><strong>Type your analyse's secret code:</strong></p>
-                    </div>
-                    <div className="col-md-12 centered">
-                        <form onSubmit={this.getPrivateAnalyse.bind(this)}>
-                            <input type="number" placeholder="Enter your code here..."
-                                onChange={this.secretCodeHandler.bind(this)} required />
-                            <button type="submit">Submit</button>
-                        </form>
-                    </div>
-                </div>
-
                 {this.state.boughtAnalyseResult}
-                {this.state.privateAnalyseResult}
-
-                {this.state.showAnalysesForSale ?
-                    <div className="row" style={{ marginTop: '30px' }}>
-                        <div className="col-md-6" style={{ padding: '0px' }}>
-                            {analysesLeftRow}
+                {this.state.searchAnalyseResult}
+                {
+                    this.state.showPrivateSearch ?
+                        <div className="row" style={{ marginTop: "50px" }}>
+                            <div className="col-md-12 centered">
+                                <p><strong>Type your analyse's secret code:</strong></p>
+                            </div>
+                            <div className="col-md-12 centered">
+                                <form onSubmit={this.getPrivateAnalyseHandler.bind(this)}>
+                                    <input type="number" placeholder="Enter your code here..."
+                                        onChange={this.secretCodeHandler.bind(this)} required />
+                                    <button type="submit">Submit</button>
+                                </form>
+                            </div>
                         </div>
-                        <div className="col-md-6" style={{ padding: '0px' }}>
-                            {analysesRightRow}
-                        </div>
-                    </div>
-                    :
-                    <div className="row" style={{ marginTop: '30px' }}>
-                        <div className="col-md-12" style={{ padding: '0px' }}>
-                            {selfBougthAnalyses}
-                        </div>
-                    </div>
+                        :
+                        this.state.privateAnalyseResult
+                            ||
+                            this.state.showAnalysesForSale ?
+                            <div className="row" style={{ marginTop: '30px' }}>
+                                <div className="col-md-6" style={{ padding: '0px' }}>
+                                    {analysesLeftRow}
+                                </div>
+                                <div className="col-md-6" style={{ padding: '0px' }}>
+                                    {analysesRightRow}
+                                </div>
+                            </div>
+                            :
+                            <div className="row" style={{ marginTop: '30px' }}>
+                                <div className="col-md-12" style={{ padding: '0px' }}>
+                                    {selfBougthAnalyses}
+                                </div>
+                            </div>
                 }
             </div>
         )
