@@ -192,7 +192,7 @@ class labosTemplate extends Component {
                         </div>
                     :
                     <div className="row" style={{ marginTop: '30px' }}>
-                        <div class="col-md-2"></div>
+                        <div className="col-md-2"></div>
                         <div className="col-md-8" style={{ padding: '0px' }}>
                             <PostAnalyse
                                 submit={this.postAnalyse.bind(this)}
@@ -205,7 +205,7 @@ class labosTemplate extends Component {
                                 descriptionChanged={(event) => this.setState({ analyseDescription: event.target.value })}
                             />
                         </div>
-                        <div class="col-md-2"></div>
+                        <div className="col-md-2"></div>
                     </div>
                 }
             </div >

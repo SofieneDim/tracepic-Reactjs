@@ -38,7 +38,7 @@ const postAnalyse = props => {
                             onChange={props.descriptionChanged}
                             required></textarea>
                         <h3 style={{ marginTop: "10px" }}>Make it private analyse</h3>
-                        <div class="row">
+                        <div className="row">
                             <div className="col-md-2">
                                 <label className="switch">
                                     <input type="checkbox" onClick={ props.checkboxSwiched }/>
@@ -48,8 +48,8 @@ const postAnalyse = props => {
                             {  props.secretCode  !== 0 ? <h3>{ props.secretCode }</h3> : null}
                         </div>
                         <div style={{ marginTop: '20px', marginBottom: "20px", float: "right" }}>
-                            <button type="submit" class="btn btn-primary btn-success">Submit</button>
-                            <button type="button" class="btn" onClick={ props.cancel }>Close</button>
+                            <button type="submit" className="btn btn-primary btn-success">Submit</button>
+                            <button type="button" className="btn" onClick={ props.cancel }>Close</button>
                         </div>
                     </div>
                 </div>

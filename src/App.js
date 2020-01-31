@@ -5,7 +5,7 @@ import './App.css'
 
 import LabosTemplate from './LabosTemplate/labosTemplate'
 import UsersTemplate from './UsersTemplate/usersTemplate'
-import SignInUp from './Sign-In-Up/signIn'
+import SignInUp from './Sign-In-Up/container'
 
 
 
@@ -30,6 +30,7 @@ class App extends Component {
 
 
   developSigninHandler() {
+    console.log('developSigninHandler:')
 
     if (!true) {
       this.setState({ accountAddress: "0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4" })
@@ -42,8 +43,8 @@ class App extends Component {
   }
 
 
-  componentDidMount() {
-    this.initContract()
+  async componentDidMount() {
+    await this.initContract()
   }
 
   async initContract() {
@@ -60,9 +61,9 @@ class App extends Component {
     // this.setState({ accountAddress: accounts[0], balance })
     // } else {
 
-    // let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
-    // balance = this.state.web3.utils.fromWei(balance, "ether")
-    // this.setState({ accountAddress: this.state.signinAddress, balance })
+    let balance = await this.state.web3.eth.getBalance(this.state.signinAddress)
+    balance = this.state.web3.utils.fromWei(balance, "ether")
+    this.setState({ accountAddress: this.state.signinAddress, balance })
 
     // }
   }
@@ -78,18 +79,18 @@ class App extends Component {
 
   async signinHandler(event) {
     event.preventDefault()
+    console.log('this.state.signinAddress:', this.state.signinAddress)
     try {
       const accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.signinAddress).call()
-
+      console.log('accountReceipt:', accountReceipt)
       if (accountReceipt[1] == 0x0) {
         return console.log("account doesn't exist")
       }
-
+      console.log('this.state.signinEmail:', this.state.signinEmail, accountReceipt[3])
       if (this.state.signinEmail !== accountReceipt[3]) {
         return console.log("wrong email address")
       }
-
       if (this.state.signinPassword !== accountReceipt[4]) {
         return console.log("wrong password")
       }
@@ -106,20 +107,37 @@ class App extends Component {
 
   async signupHandler(event) {
     event.preventDefault()
-
     if (this.state.signupPassword !== this.state.signupPasswordConf) {
       return console.log("Password doesn't match")
     }
-    
-    console.log("Password doesn't match")
-
+    const account = await this.state.web3.eth.accounts.create()
+    const keystore = this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword);
     try {
       const signupReceipt = await this.state.contractInstance.methods
-        .signup(this.state.signupAddress, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false).call() // creat as users
+        .signup(account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false)
+        .send({ from: "0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4", gas: 200000000 }) //**££************************************************************
       console.log('signupReceipt:', signupReceipt)
     } catch (error) {
-      console.error(error)
+      return console.error(error)
     }
+    const fileName = this.state.signupUsername + " " + account.address
+    this.keystoreDownload(fileName, JSON.stringify(keystore))
+    this.setState({ signinAddress: account.address })
+    this.usersMode()
+    this.loadAccountInfo()
+  }
+
+  async keystoreDownload(_filename, _content) {
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(_content));
+    element.setAttribute('download', _filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
   }
 
   render() {
@@ -127,9 +145,10 @@ class App extends Component {
       <div className="container">
         {!this.state.accessApproved ?
           <SignInUp
+            web3={this.state.web3}
             signinSignup={this.state.signinSignup}
             signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-            click={this.state.SignInUp ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
+            click={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
 
             inAddressChanged={(event) => { this.signinInputChanged("signinAddress", event.target.value) }}
             inEmailChanged={(event) => { this.signinInputChanged("signinEmail", event.target.value) }}
