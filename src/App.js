@@ -72,7 +72,12 @@ class App extends Component {
     const analysesIds = await this.state.contractInstance.methods.getAllAnalyses().call()
     const analyses = []
     for (let i = 1; i <= analysesIds.length; i++) {
-      analyses.push(await this.state.contractInstance.methods.analyses(i).call())
+
+      const analyse = await this.state.contractInstance.methods.analyses(i).call()
+      if (analyse.secret !== "0"){
+        console.log('analyse:')
+        analyses.push(analyse)
+      }
     }
     this.setState({ analyses })
   }
@@ -83,17 +88,16 @@ class App extends Component {
     try {
       const accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.signinAddress).call()
-      console.log('accountReceipt:', accountReceipt)
       if (accountReceipt[1] == 0x0) {
         return console.log("account doesn't exist")
       }
-      console.log('this.state.signinEmail:', this.state.signinEmail, accountReceipt[3])
       if (this.state.signinEmail !== accountReceipt[3]) {
         return console.log("wrong email address")
       }
       if (this.state.signinPassword !== accountReceipt[4]) {
         return console.log("wrong password")
       }
+      this.setState({ accountName: accountReceipt[2]})
       if (accountReceipt[5]) {
         this.labosMode()
       } else {
@@ -165,6 +169,7 @@ class App extends Component {
               analyses={this.state.analyses.reverse()}
               balance={this.state.balance}
               accountAddress={this.state.accountAddress}
+              accountName={this.state.accountName} 
               reloadAccountInfo={this.loadAccountInfo.bind(this)}
             />
             : <LabosTemplate

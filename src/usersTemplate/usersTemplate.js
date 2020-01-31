@@ -203,7 +203,7 @@ class UsersTemplate extends Component {
                     <div className="col-md-8">
                         <div className="row">
                             <div className="col-md-3">
-                                <p id="account_name" style={{ textAlign: 'right' }} >name</p>
+                                <p id="account_name" style={{ textAlign: 'right' }} >{this.props.accountName}</p>
                             </div>
                             <div className="col-md-9">
                                 <p id="account" style={{ textAlign: 'right' }} >{this.props.accountAddress}</p>

@@ -123,7 +123,6 @@ class labosTemplate extends Component {
             <div>
                 {
                     this.props.analyses.map((analyse) => {
-                        console.log('analyse:', analyse.secret)
                         return this.state.showSelfPosted ?
                             <AnalysesTemplate
                                 analyse={analyse}

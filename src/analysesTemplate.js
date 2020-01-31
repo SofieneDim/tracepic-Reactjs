@@ -15,7 +15,6 @@ class AnalysesTemplate extends Component {
             <div id="analyses-template-panel" style={{ border: '3px solid ' + this.props.color }}>
                 <div id="analyses-template-header" style={{ backgroundColor: this.props.color }}>
                     <strong><span id="analyse-panel-title">Reference: {this.props.analyse.analyseReference}</span></strong>
-    
                     {this.props.laboMode & this.props.analyse.secret != 0 ?
                         <div style={{ float: "right", cursor: "pointer" }}  onClick={() => this.setState({ showSecret: !this.state.showSecret})}>
                             {this.state.showSecret ?
