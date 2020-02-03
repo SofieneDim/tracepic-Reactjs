@@ -3,7 +3,6 @@ import './usersTemplate.css'
 
 import NavigationBar from './usersNavigationBar'
 import AnalysesTemplate from '../analysesTemplate'
-import Web3 from 'web3'
 
 class UsersTemplate extends Component {
 
@@ -18,48 +17,40 @@ class UsersTemplate extends Component {
             showAnalysesForSale: true,
             boughtAnalyseResult: null,
             privateAnalyseResult: null,
+            showPrivateSearch: false,
+            showBuyEther: false,
             secretCode: '',
-            showPrivateSearch: false
         }
         this.loadAnalyses()
     }
 
     async loadAnalyses() {
-        const analyses = []
-        const analysesForSale = []
-
         const analysesIds = await this.props.contract.methods.getAllAnalyses().call()
+        const analysesForSale = []
         for (let i = 1; i <= analysesIds.length; i++) {
-            analyses.push(await this.props.contract.methods.analyses(i).call())
-        }
 
-        const analysesForSaleIds = await this.props.contract.methods.getAnalysesForSale().call()
-        for (let i = 0; i < analysesForSaleIds.length; i++) {
-            analysesForSale.push(await this.props.contract.methods.analyses(analysesForSaleIds[i]).call())
-        }
+            const analyse = await this.props.contract.methods.analyses(i).call()
+            analysesForSale.push(analyse)
 
-        this.setState({ analyses })
+        }
         this.setState({ analysesForSale })
-
         this.sortAnalyses()
     }
 
     sortAnalyses() {
-        const analyses = this.state.analyses
+        const analyses = this.state.analysesForSale
         const selfBougthAnalyses = []
         let analysesLeftIndex = []
-        let analysesRightIndex = []                                       //******************************
-        for (let i = 0; i < this.state.analysesForSale.length; i++) {
-            if (analyses[i].secret == 0) {
+        let analysesRightIndex = []
+        for (let i = 0; i < analyses.length; i++) {
+            if (analyses[i].secret == 0 && analyses[i].buyer == 0x0) {
                 if (i % 2 === 0) {
-                    analysesLeftIndex.push(this.state.analysesForSale[i])
+                    analysesLeftIndex.push(analyses[i])
                 } else {
-                    analysesRightIndex.push(this.state.analysesForSale[i])
+                    analysesRightIndex.push(analyses[i])
                 }
             }
-        }
-        for (let i = 0; i < analyses.length; i++) {
-            if (analyses[i][2] === this.props.accountAddress) {
+            if (analyses[i].buyer === this.props.accountAddress) {
                 selfBougthAnalyses.push(analyses[i])
             }
         }
@@ -101,9 +92,8 @@ class UsersTemplate extends Component {
 
     async getPrivateAnalyseHandler(event) {
         event.preventDefault()
-
-        console.log('event:', this.state.secretCode)
-        const privateAnalyseResult = await this.props.contract.methods.privateAnalyses(this.state.secretCode).call()
+        let privateAnalyseResult = await this.props.contract.methods.privateAnalyses(this.state.secretCode).call()
+        privateAnalyseResult = await this.props.contract.methods.analyses(privateAnalyseResult.id).call() // ***** .id rmv
         console.log('privateAnalyseResult:', privateAnalyseResult)
         if (privateAnalyseResult.id == 0) {
             console.log("analyse not found")
@@ -198,7 +188,10 @@ class UsersTemplate extends Component {
                         <p id="accountBalance" >{Number(this.props.balance).toFixed(2)} ETH</p>
                     </div>
                     <div className="col-md-1">
-                        <button id="buy-ether" ></button>
+                        <button 
+                        id="buy-ether"
+                        onClick={() => this.setState({ showBuyEther: !this.state.showBuyEther })}
+                        ></button>
                     </div>
                     <div className="col-md-8">
                         <div className="row">
@@ -212,46 +205,51 @@ class UsersTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
-                    forSale={() => this.setState({ showAnalysesForSale: true, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null })}
-                    selfBought={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null })}
-                    privateAnalyse={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: true, searchAnalyseResult: null, boughtAnalyseResult: null })}
+                    forSale={() => this.setState({ showAnalysesForSale: true, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null, showBuyEther: false })}
+                    selfBought={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: false, searchAnalyseResult: null, boughtAnalyseResult: null, showBuyEther: false })}
+                    privateAnalyse={() => this.setState({ showAnalysesForSale: false, showPrivateSearch: true, searchAnalyseResult: null, boughtAnalyseResult: null, showBuyEther: false })}
                     searchAnalyse={this.searchAnalyse.bind(this)}
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                 />
-                {this.state.boughtAnalyseResult}
-                {this.state.searchAnalyseResult}
                 {
-                    this.state.showPrivateSearch ?
-                        <div className="row" style={{ marginTop: "50px" }}>
-                            <div className="col-md-12 centered">
-                                <p><strong>Type your analyse's secret code:</strong></p>
-                            </div>
-                            <div className="col-md-12 centered">
-                                <form onSubmit={this.getPrivateAnalyseHandler.bind(this)}>
-                                    <input type="number" placeholder="Enter your code here..."
-                                        onChange={this.secretCodeHandler.bind(this)} required />
-                                    <button type="submit">Submit</button>
-                                </form>
-                            </div>
-                        </div>
-                        :
-                        this.state.privateAnalyseResult
-                            ||
-                            this.state.showAnalysesForSale ?
-                            <div className="row" style={{ marginTop: '30px' }}>
-                                <div className="col-md-6" style={{ padding: '0px' }}>
-                                    {analysesLeftRow}
-                                </div>
-                                <div className="col-md-6" style={{ padding: '0px' }}>
-                                    {analysesRightRow}
-                                </div>
-                            </div>
-                            :
-                            <div className="row" style={{ marginTop: '30px' }}>
-                                <div className="col-md-12" style={{ padding: '0px' }}>
-                                    {selfBougthAnalyses}
-                                </div>
-                            </div>
+                    !this.state.showBuyEther ?
+                        <div>
+                            {this.state.boughtAnalyseResult}
+                            {
+                                this.state.showPrivateSearch ?
+                                    <div className="row" style={{ marginTop: "50px" }}>
+                                        <div className="col-md-12 centered">
+                                            <p><strong>Type your analyse's secret code:</strong></p>
+                                        </div>
+                                        <div className="col-md-12 centered">
+                                            <form onSubmit={this.getPrivateAnalyseHandler.bind(this)}>
+                                                <input type="number" placeholder="Enter your code here..."
+                                                    onChange={this.secretCodeHandler.bind(this)} required />
+                                                <button type="submit">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    :
+                                    this.state.privateAnalyseResult
+                                        ||
+                                        this.state.showAnalysesForSale ?
+                                        <div className="row" style={{ marginTop: '30px' }}>
+                                            <div className="col-md-6" style={{ padding: '0px' }}>
+                                                {analysesLeftRow}
+                                            </div>
+                                            <div className="col-md-6" style={{ padding: '0px' }}>
+                                                {analysesRightRow}
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className="row" style={{ marginTop: '30px' }}>
+                                            <div className="col-md-12" style={{ padding: '0px' }}>
+                                                {selfBougthAnalyses}
+                                            </div>
+                                        </div>
+                            }
+                            {this.state.searchAnalyseResult}
+                    </div> : null
                 }
             </div>
         )

@@ -41,7 +41,7 @@ class AnalysesTemplate extends Component {
                     </div>
                 }
                 <div id="analyses-template-footer" style={{ backgroundColor: this.props.color }}>
-                    {!this.props.laboMode ?
+                    {!this.props.laboMode && this.props.analyse.buyer == "0x0000000000000000000000000000000000000000" ?
                         <button type="button" className="btn btn-primary btn-success" onClick={this.props.buyAnalyse}>Buy</button>
                         : null
                     }

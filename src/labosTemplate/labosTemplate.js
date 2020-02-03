@@ -69,6 +69,7 @@ class labosTemplate extends Component {
                 console.log('xhttp.response.value:', xhttp.response)
                 // setTimeout(() => {this.getAnalyseValue()}, 2000)
             }
+            this.setState({ isPrivate: false })
         }.bind(this)
     }
 
@@ -78,7 +79,6 @@ class labosTemplate extends Component {
     }
 
     async manageSecretCode() {
-        console.log('this.state.isPrivate:', this.state.isPrivate)
 
         if (this.state.isPrivate) {
             let secretCode = parseInt(Math.random() * 10000);
@@ -162,12 +162,23 @@ class labosTemplate extends Component {
                                 : null
                     })
                 }
-            </div>
+            </div >
         )
 
         return (
             <div >
                 <div className="jumbotron" id="labos-jumbotron"></div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <p id="accountBalance" >{Number(this.props.balance).toFixed(2)} ETH</p>
+                    </div>
+                            <div className="col-md-4">
+                                <p id="account_name" style={{ textAlign: 'right' }} >{this.props.accountName}</p>
+                            </div>
+                            <div className="col-md-5">
+                                <p id="account" style={{ textAlign: 'right' }} >{this.props.accountAddress}</p>
+                            </div>
+                </div>
                 <NavigationBar
                     postAnalyse={this.getAnalyseValue.bind(this)}
                     postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
@@ -183,7 +194,7 @@ class labosTemplate extends Component {
                                 {analyses}
                             </div>
                         </div>
-                        : 
+                        :
                         <div className="row bb" style={{ marginTop: '30px' }}>
                             <div className="col-md-12" style={{ padding: '0px' }}>
                                 {analyses}

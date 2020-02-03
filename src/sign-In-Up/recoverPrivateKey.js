@@ -18,10 +18,8 @@ class RecoverPrivateKey extends Component {
         fileReader.onload = (fileLoadedEvent) => {
             const textFromFileLoaded = fileLoadedEvent.target.result
             try {
-                console.log("start");
                 const decryptedAccount = web3.eth.accounts.decrypt(textFromFileLoaded, keystorePassword)
                 this.setState({ addressResult: decryptedAccount.address, privateKeyResult: decryptedAccount.privateKey })
-                console.log("end");
             } catch (error) {
                 return console.error(error)
             }

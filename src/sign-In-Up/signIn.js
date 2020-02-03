@@ -25,6 +25,7 @@ class signin extends Component {
                                 id="signIn-account-address"
                                 placeholder="Enter your address"
                                 onChange={this.props.inAddressChanged}
+                                required
                             />
                             <small id="emailHelp" className="form-text text-muted">Address must begin with: 0x</small>
                         </div>
@@ -33,7 +34,9 @@ class signin extends Component {
                             <input type="email" className="form-control"
                                 id="signIn-account-email" aria-describedby="emailHelp"
                                 placeholder="Enter your E-mail"
-                                onChange={this.props.inEmailChanged} />
+                                onChange={this.props.inEmailChanged} 
+                                required
+                                />
                             <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
                         <div className="form-group" style={{ marginTop: '20px' }}>
@@ -41,7 +44,9 @@ class signin extends Component {
                             <input type="password" className="form-control"
                                 id="signIn-account-password"
                                 placeholder="Enter your password"
-                                onChange={this.props.inPasswordChanged} />
+                                onChange={this.props.inPasswordChanged} 
+                                required
+                                />
                         </div>
                         <div className="row" style={{ marginTop: '28px', display: 'none' }}>
                             <div className="col-md-4">

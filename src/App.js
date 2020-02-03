@@ -74,17 +74,14 @@ class App extends Component {
     for (let i = 1; i <= analysesIds.length; i++) {
 
       const analyse = await this.state.contractInstance.methods.analyses(i).call()
-      if (analyse.secret !== "0"){
-        console.log('analyse:')
-        analyses.push(analyse)
-      }
+      analyses.push(analyse)
+
     }
     this.setState({ analyses })
   }
 
   async signinHandler(event) {
     event.preventDefault()
-    console.log('this.state.signinAddress:', this.state.signinAddress)
     try {
       const accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.signinAddress).call()
@@ -97,7 +94,7 @@ class App extends Component {
       if (this.state.signinPassword !== accountReceipt[4]) {
         return console.log("wrong password")
       }
-      this.setState({ accountName: accountReceipt[2]})
+      this.setState({ accountName: accountReceipt[2] })
       if (accountReceipt[5]) {
         this.labosMode()
       } else {
@@ -169,7 +166,7 @@ class App extends Component {
               analyses={this.state.analyses.reverse()}
               balance={this.state.balance}
               accountAddress={this.state.accountAddress}
-              accountName={this.state.accountName} 
+              accountName={this.state.accountName}
               reloadAccountInfo={this.loadAccountInfo.bind(this)}
             />
             : <LabosTemplate
@@ -177,6 +174,7 @@ class App extends Component {
               balance={this.state.balance}
               contract={this.state.contractInstance}
               accountAddress={this.state.accountAddress}
+              accountName={this.state.accountName}
               reloadAnalyses={this.loadAnalyses.bind(this)}
             />
         }
