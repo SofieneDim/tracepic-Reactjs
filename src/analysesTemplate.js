@@ -28,7 +28,15 @@ class AnalysesTemplate extends Component {
                 </div>
                 {this.props.laboMode ?
                     <div style={{ padding: '10px' }}>
-                        <strong>Value:</strong> <span>{this.props.analyse.value}</span> <br />
+                        <strong>Value:</strong> <span>
+                            {
+                                this.props.analyse.value.startsWith("https://ipfs.infura.io/ipfs/") ?
+                                <a href="#" 
+                                onClick={() => window.open(this.props.analyse.value, '_blank')}
+                                >Go to content</a>
+                                :   this.props.analyse.value
+                            }
+                            </span> <br />
                         <strong>Description:</strong> <span>{this.props.analyse.description}</span><br />
                         <strong>Price:</strong> <span>{Web3.utils.fromWei(this.props.analyse.price, "ether")} (ETH) </span><br />
                         <strong>Date:</strong> <span>{this.props.analyse.date}</span><br />

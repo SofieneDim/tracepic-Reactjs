@@ -20,7 +20,7 @@ class signin extends Component {
                 {!this.state.recoverPrivateKey ?
                     <div id="sign-in-up-template">
                         <div className="form-group" style={{ marginTop: '20px' }}>
-                            <label htmlFor="signIn-account-address" className="centered">Account address</label>
+                            <label htmlFor="signIn-account-address" className="centered">Private Key</label>
                             <input type="text" className="form-control"
                                 id="signIn-account-address"
                                 placeholder="Enter your address"
@@ -82,8 +82,9 @@ class signin extends Component {
                         <a href="#" onClick={() => this.setState({ recoverPrivateKey: true })}>Private_Key Forgotten</a>
                     </div>
                     :
-                    <RecoverPrivateKey 
+                    <RecoverPrivateKey
                         web3={this.props.web3}
+                        cancel={() => this.setState({ recoverPrivateKey: false }) }
                     />
                 }
             </div>

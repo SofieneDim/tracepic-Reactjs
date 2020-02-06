@@ -36,7 +36,6 @@ const labosNavigationBar = (props) => {
             <div className="loader"></div>
           </div>
         </div>
-
         <div className="centered" style={{ marginTop: '20px', color: 'red', textAlign: 'center', display: 'none' }}>
           <h4 id="analyse-not-found">Sorry! <br /> there is no analyse with that reference</h4>
         </div>

@@ -15,3 +15,39 @@
     margin: 0px;
     background-color: cornsilk;
 }
+
+.analyse-loader {
+  border: 6px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 6px solid blue;
+  border-bottom: 6px solid blue;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+}
+#private-recover-back {
+  background-image: url(../imgs/back-arrow.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+  padding-left: 40px;
+  margin-top: 20px;
+  vertical-align: middle;
+}
+
+#privateKeyRecovery {
+  width: 220px;
+  height: 200px;
+  padding-top: 0px;
+}
+
+#sign-in-up-title {
+  color: rgb(49, 54, 203);
+  font-family: monospace;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+}

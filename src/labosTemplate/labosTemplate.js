@@ -5,6 +5,8 @@ import NavigationBar from './labosNavigationBar'
 import AnalysesTemplate from '../analysesTemplate';
 import PostAnalyse from './postAnalyseTemplate';
 import Web3 from 'web3';
+import ipfs from '../ipfs/ipfsConfig';
+import { TRACEPIC_ADDRESS } from '../contract_ABI_Address';
 
 class labosTemplate extends Component {
 
@@ -20,11 +22,18 @@ class labosTemplate extends Component {
             analyseValue: '',
             isPrivate: false,
             secretCode: 0,
+            postSubmitDisable: true,
+            postAnalyseLoading: false
         }
+    }
+
+    componentDidMount = async () => {
+
     }
 
     async postAnalyse(event) {
         event.preventDefault()
+        this.setState({ postAnalyseLoading: true, postSubmitDisable: true })
         const _reference = this.state.reference
         const _price = Web3.utils.toWei(this.state.analysePrice, "ether")
         const _description = this.state.analyseDescription
@@ -32,16 +41,28 @@ class labosTemplate extends Component {
         const _secretCode = this.state.secretCode
         const _date = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear() +
             " " + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
+        const encoded_tx = this.props.contractInstance.methods
+            .sellAnalyse(_reference, _value, _date, _description, _price, _secretCode).encodeABI();
+        var rawTransaction = {
+            "from": this.props.accountAddress,
+            "data": encoded_tx,
+            "to": TRACEPIC_ADDRESS,
+            "gas": 500000
+        }
 
         try {
-            const trasactionReceipt = await this.props.contract.methods
-                .sellAnalyse(_reference, _value, _date, _description, _price, _secretCode)
-                .send({ from: '0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4', gas: 20000000 })
-            console.log('trasactionReceipt:', trasactionReceipt)
-            this.setState({ showAnalyse: true })
-            this.props.reloadAnalyses()
+            this.props.web3.eth.accounts.signTransaction(rawTransaction, this.props.privateKey)
+                .then(signedTx => this.props.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+                .then(receipt => {
+                    console.log('receipt:', receipt)
+                    this.props.reloadAnalyses()
+                    this.setState({ postAnalyseLoading: false, showAnalyse: true, showSelfPosted: true })
+                })
+                .catch(err => {
+                    console.error(err)
+                })
         } catch (error) {
-            console.error('error:', error)
+            console.log(error)
         }
     }
 
@@ -58,7 +79,7 @@ class labosTemplate extends Component {
             if (xhttp.status == 200) {
                 if (xhttp.response !== null) {
                     if (xhttp.response.state == true) {
-                        this.setState({ analyseValue: xhttp.response.value })
+                        this.setState({ analyseValue: xhttp.response.value, postSubmitDisable: false })
                     } else {
                         // setTimeout(() => {this.getAnalyseValue()}, 2000)
                     }
@@ -66,7 +87,6 @@ class labosTemplate extends Component {
                     // setTimeout(() => {this.getAnalyseValue()}, 2000)
                 }
             } else {
-                console.log('xhttp.response.value:', xhttp.response)
                 // setTimeout(() => {this.getAnalyseValue()}, 2000)
             }
             this.setState({ isPrivate: false })
@@ -82,10 +102,10 @@ class labosTemplate extends Component {
 
         if (this.state.isPrivate) {
             let secretCode = parseInt(Math.random() * 10000);
-            let _validSecret = await this.props.contract.methods.secretValid(secretCode).call();
+            let _validSecret = await this.props.contractInstance.methods.secretValid(secretCode).call();
             while (secretCode < 1000 || secretCode > 9999 || !_validSecret) {
                 secretCode = parseInt(Math.random() * 10000);
-                _validSecret = await this.props.contract.methods.secretValid(secretCode).call();
+                _validSecret = await this.props.contractInstance.methods.secretValid(secretCode).call();
             }
             this.setState({ secretCode })
         } else {
@@ -100,10 +120,10 @@ class labosTemplate extends Component {
     async searchAnalyse(event) {
         event.preventDefault()
 
-        const analyseId = await this.props.contract.methods
+        const analyseId = await this.props.contractInstance.methods
             .getAnalyseByReference(this.state.analyseSearchReference).call()
         if (analyseId == 0) { return console.log('analyse not found!') }
-        const analyse = await this.props.contract.methods.analyses(analyseId).call()
+        const analyse = await this.props.contractInstance.methods.analyses(analyseId).call()
 
         const searchAnalyseResult = (
             <div>
@@ -115,6 +135,24 @@ class labosTemplate extends Component {
             </div>
         )
         this.setState({ searchAnalyseResult })
+    }
+
+    captureFileHandler = async (event) => {
+        event.preventDefault()
+        const file = event.target.files[0]
+        const reader = new window.FileReader()
+        reader.readAsArrayBuffer(file)
+        reader.onloadend = async () => {
+            await this.uploadFileToIPFS(Buffer(reader.result))
+        }
+    }
+
+    async uploadFileToIPFS(fileBuffer) {
+        await ipfs.add(fileBuffer, (error, ipfsHash) => {
+            const fileLink = "https://ipfs.infura.io/ipfs/" + ipfsHash[0].hash
+            this.setState({ analyseValue: fileLink, postSubmitDisable: false })
+            if (error) { return console.error(error) }
+        })
     }
 
     render() {
@@ -172,15 +210,15 @@ class labosTemplate extends Component {
                     <div className="col-md-3">
                         <p id="accountBalance" >{Number(this.props.balance).toFixed(2)} ETH</p>
                     </div>
-                            <div className="col-md-4">
-                                <p id="account_name" style={{ textAlign: 'right' }} >{this.props.accountName}</p>
-                            </div>
-                            <div className="col-md-5">
-                                <p id="account" style={{ textAlign: 'right' }} >{this.props.accountAddress}</p>
-                            </div>
+                    <div className="col-md-4">
+                        <p id="account_name" style={{ textAlign: 'right' }} >{this.props.accountName}</p>
+                    </div>
+                    <div className="col-md-5">
+                        <p id="account" style={{ textAlign: 'right' }} >{this.props.accountAddress}</p>
+                    </div>
                 </div>
                 <NavigationBar
-                    postAnalyse={this.getAnalyseValue.bind(this)}
+                    postAnalyse={() => {this.getAnalyseValue(); this.setState({ analyseValue: '' })}}
                     postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
                     boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
                     searchAnalyse={this.searchAnalyse.bind(this)}
@@ -204,6 +242,14 @@ class labosTemplate extends Component {
                     <div className="row" style={{ marginTop: '30px' }}>
                         <div className="col-md-2"></div>
                         <div className="col-md-8" style={{ padding: '0px' }}>
+
+                            {
+                                this.state.postAnalyseLoading ?
+                                    <div className="centered" style={{ margin: "20px" }}>
+                                        <div className="loader"></div>
+                                    </div>
+                                    : null
+                            }
                             <PostAnalyse
                                 submit={this.postAnalyse.bind(this)}
                                 cancel={this.cancelPostHandler.bind(this)}
@@ -213,7 +259,10 @@ class labosTemplate extends Component {
                                 referenceChanged={(event) => this.setState({ reference: event.target.value })}
                                 priceChanged={(event) => this.setState({ analysePrice: event.target.value })}
                                 descriptionChanged={(event) => this.setState({ analyseDescription: event.target.value })}
+                                captureFile={this.captureFileHandler}
+                                submitDisable={this.state.postSubmitDisable}
                             />
+
                         </div>
                         <div className="col-md-2"></div>
                     </div>

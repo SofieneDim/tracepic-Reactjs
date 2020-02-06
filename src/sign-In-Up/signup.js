@@ -11,7 +11,7 @@ class signup extends Component {
 
     render() {
         return (
-            <div className="row col-md-10">
+            <div className="row col-md-10" style={{ marginBottom: "40px"}}>
                 <div className="col-md-12">
                     <div className="form-group" style={{ marginTop: '20px' }}>
                         <label htmlFor="signup-username" className="centered">Username</label>

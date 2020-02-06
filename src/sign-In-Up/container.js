@@ -33,9 +33,16 @@ class SignInUp extends Component {
                     <div className="col-md-12">
                         <div className="row" id="sign-inBody" style={{ backgroundColor: 'white' }}>
                             <div className="col-md-1"></div>
-                            <div className="col-md-3 centered">
-                                <img src={signinImage} alt="" />
+
+                            <div className="row col-md-3 centered">
+                                <div className="col-md-12 centered" style={{ marginTop: '20px'}}>
+                                    <h2 id='sign-in-up-title'>{this.props.signinSignup ? "Sign In" : "Sign Up"}</h2>
+                                </div>
+                                <div className="col-md-12 centered">
+                                    <img src={signinImage} alt="" />
+                                </div>
                             </div>
+
                             <div className="col-md-8">
                                 <form onSubmit={this.props.click}>
                                     <div>
@@ -44,7 +51,7 @@ class SignInUp extends Component {
                                             {this.props.signinSignup ?
                                                 <Signin
                                                     web3={this.props.web3}
-                                                    inAddressChanged={this.props.inAddressChanged}
+                                                    inAddressChanged={this.props.inPrivateKeyChanged}
                                                     inEmailChanged={this.props.inEmailChanged}
                                                     inPasswordChanged={this.props.inPasswordChanged}
                                                 />
@@ -54,25 +61,22 @@ class SignInUp extends Component {
                                                     upEmailChanged={this.props.upEmailChanged}
                                                     upPasswordChanged={this.props.upPasswordChanged}
                                                     upPasswordConfChanged={this.props.upPasswordConfChanged}
-                                                    
-                                                    
-                                                    
                                                 />
                                             }
                                             <div className="col-md-1"></div>
                                         </div>
                                     </div>
-                                    <div className="modal-footer">
-                                        <h3 id="signin_warning" style={{ color: 'red' }}></h3>
-                                        <button className="btn btn-primary" type="button"
-                                            style={{ backgroundColor: '#3384CC' }} onClick={this.props.signup}
-                                        >{this.props.signinSignup ? "Go to Sign Up" : "Go to Sign In"}</button>
-                                        <button className="btn btn-primary signin_botton" type="submit"
-                                            onClick={this.props.click}
-                                            style={{ backgroundColor: '#3333CC' }}
-                                        >Connect</button>
-                                        <div className="centered">
-                                            <button className="btn btn-primary" style={{ display: 'none', backgroundColor: '#3333CC' }}>Done!</button>
+                                    <div className="row modal-footer">
+                                        <div className='col-md-3'>
+                                            <button className="btn btn-primary" type="button"
+                                                style={{ backgroundColor: '#3384CC', float: 'left' }} onClick={this.props.signup}
+                                            >{this.props.signinSignup ? "Go to Sign Up" : "Go to Sign In"}</button>
+                                        </div>
+                                        <div className='col-md-8'>
+                                            <button className="btn btn-primary signin_botton" type="submit"
+                                                onClick={this.props.submit}
+                                                style={{ backgroundColor: '#3333CC', float: 'right' }}
+                                            >Connect</button>
                                         </div>
                                     </div>
                                 </form>

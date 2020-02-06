@@ -3,6 +3,7 @@ import './usersTemplate.css'
 
 import NavigationBar from './usersNavigationBar'
 import AnalysesTemplate from '../analysesTemplate'
+import { TRACEPIC_ADDRESS } from '../contract_ABI_Address'
 
 class UsersTemplate extends Component {
 
@@ -20,16 +21,17 @@ class UsersTemplate extends Component {
             showPrivateSearch: false,
             showBuyEther: false,
             secretCode: '',
+            buyLoading: false
         }
         this.loadAnalyses()
     }
 
     async loadAnalyses() {
-        const analysesIds = await this.props.contract.methods.getAllAnalyses().call()
+        const analysesIds = await this.props.contractInstance.methods.getAllAnalyses().call()
         const analysesForSale = []
         for (let i = 1; i <= analysesIds.length; i++) {
 
-            const analyse = await this.props.contract.methods.analyses(i).call()
+            const analyse = await this.props.contractInstance.methods.analyses(i).call()
             analysesForSale.push(analyse)
 
         }
@@ -54,29 +56,36 @@ class UsersTemplate extends Component {
                 selfBougthAnalyses.push(analyses[i])
             }
         }
-        this.setState({ selfBougthAnalyses: selfBougthAnalyses.reverse(), analysesRightIndex: analysesRightIndex.reverse(), analysesLeftIndex: analysesLeftIndex.reverse() })
+        this.setState({ selfBougthAnalyses: selfBougthAnalyses, analysesRightIndex: analysesRightIndex, analysesLeftIndex: analysesLeftIndex })
     }
 
     async buyAnalyse(_id, _price) {
-        try {
-            const transactionReceipt = await this.props.contract.methods
-                .buyAnalyse(_id).send({
-                    from: this.props.accountAddress,
-                    value: _price
-                })
-            console.log('transactionReceipt:', transactionReceipt)
-        } catch (error) {
-            return console.log(error)
-        }
-        this.showBoughtAnalyseResult(_id)
-        this.loadAnalyses()
-        this.props.reloadAccountInfo()
-        this.setState({ privateAnalyseResult: null })
-        this.setState({ showAnalysesForSale: false })
+        this.setState({ buyLoading: true })
+        window.scrollTo(0, 0)
+        const encoded_tx = this.props.contractInstance.methods.buyAnalyse(_id).encodeABI();
+        var rawTransaction = {
+            "from": this.props.accountAddress,
+            "data": encoded_tx,
+            "value": _price,
+            "to": TRACEPIC_ADDRESS,
+            "gas": 500000
+        };
+        this.props.web3.eth.accounts.signTransaction(rawTransaction, this.props.accountPrivateKey)
+            .then(signedTx => this.props.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+            .then(receipt => {
+                this.showBoughtAnalyseResult(_id)
+                this.loadAnalyses()
+                this.props.reloadAccountInfo()
+                this.setState({ privateAnalyseResult: null, buyLoading: false, showAnalysesForSale: false, searchAnalyseResult: null })
+            })
+            .catch(err => {
+                console.error(err)
+                this.setState({ buyLoading: false })
+            });
     }
 
     async showBoughtAnalyseResult(_id) {
-        const analyse = await this.props.contract.methods.analyses(_id).call()
+        const analyse = await this.props.contractInstance.methods.analyses(_id).call()
         const boughtAnalyseResult = (
             <div>
                 <AnalysesTemplate
@@ -92,8 +101,8 @@ class UsersTemplate extends Component {
 
     async getPrivateAnalyseHandler(event) {
         event.preventDefault()
-        let privateAnalyseResult = await this.props.contract.methods.privateAnalyses(this.state.secretCode).call()
-        privateAnalyseResult = await this.props.contract.methods.analyses(privateAnalyseResult.id).call() // ***** .id rmv
+        let privateAnalyseResult = await this.props.contractInstance.methods.privateAnalyses(this.state.secretCode).call()
+        privateAnalyseResult = await this.props.contractInstance.methods.analyses(privateAnalyseResult.id).call() // ***** .id rmv
         console.log('privateAnalyseResult:', privateAnalyseResult)
         if (privateAnalyseResult.id == 0) {
             console.log("analyse not found")
@@ -118,13 +127,11 @@ class UsersTemplate extends Component {
 
     async searchAnalyse(event) {
         event.preventDefault()
-
-        const analyseId = await this.props.contract.methods
+        const analyseId = await this.props.contractInstance.methods
             .getAnalyseByReference(this.state.analyseSearchReference).call()
         if (analyseId == 0) { return console.log('analyse not found!') }
-        const analyse = await this.props.contract.methods.analyses(analyseId).call()
-        if (analyse.secret !== "0") { return console.log('this is a private analyse!') }
-
+        const analyse = await this.props.contractInstance.methods.analyses(analyseId).call()
+        if (analyse.secret != "0") { return console.log('this is a private analyse!') }
         const searchAnalyseResult = (
             <div>
                 <AnalysesTemplate
@@ -188,9 +195,9 @@ class UsersTemplate extends Component {
                         <p id="accountBalance" >{Number(this.props.balance).toFixed(2)} ETH</p>
                     </div>
                     <div className="col-md-1">
-                        <button 
-                        id="buy-ether"
-                        onClick={() => this.setState({ showBuyEther: !this.state.showBuyEther })}
+                        <button
+                            id="buy-ether"
+                            onClick={() => this.setState({ showBuyEther: !this.state.showBuyEther })}
                         ></button>
                     </div>
                     <div className="col-md-8">
@@ -212,9 +219,17 @@ class UsersTemplate extends Component {
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                 />
                 {
+                    this.state.buyLoading ?
+                        <div className="centered" style={{marginTop: "20px"}}>
+                            <div className="loader"></div>
+                        </div>
+                        : null
+                }
+                {
                     !this.state.showBuyEther ?
                         <div>
                             {this.state.boughtAnalyseResult}
+                            {this.state.searchAnalyseResult}
                             {
                                 this.state.showPrivateSearch ?
                                     <div className="row" style={{ marginTop: "50px" }}>
@@ -248,8 +263,7 @@ class UsersTemplate extends Component {
                                             </div>
                                         </div>
                             }
-                            {this.state.searchAnalyseResult}
-                    </div> : null
+                        </div> : null
                 }
             </div>
         )
