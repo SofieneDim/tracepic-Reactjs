@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import privateKeyRecovery from '../imgs/privateKeyRecovery.png'
 
+import ContractContext from '../context/contract-context'
+
 class RecoverPrivateKey extends Component {
+
+    static contextType = ContractContext
 
     constructor(props) {
         super(props)
@@ -12,9 +16,13 @@ class RecoverPrivateKey extends Component {
         }
     }
 
+    componentDidMount(){
+        console.log('context:', this.context)
+    }
+
     readKeyStore() {
         const keystore = document.getElementById("keystoreFile").files[0]
-        const web3 = this.props.web3
+        const web3 = this.context.web3
         const keystorePassword = this.state.keystorePassword
         if (!this.state.keystorePassword) { return console.log("Please upload your key-store") }
         if (keystore == undefined) { return console.log("Please upload your key-store") }

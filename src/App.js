@@ -5,7 +5,10 @@ import './App.css'
 
 import LabosTemplate from './LabosTemplate/labosTemplate'
 import UsersTemplate from './UsersTemplate/usersTemplate'
-import SignInUp from './Sign-In-Up/container'
+import Authentication from './Sign-In-Up/container'
+
+import contractContext from './context/contract-context'
+import authContext from './context/Authentication-context'
 
 class App extends Component {
 
@@ -65,6 +68,7 @@ class App extends Component {
       const analyse = await this.state.contractInstance.methods.analyses(i).call()
       analyses.push(analyse)
     }
+    console.log('analyses:', analyses)
     this.setState({ analyses })
   }
 
@@ -142,65 +146,67 @@ class App extends Component {
     return (
       <div className="container">
         {!this.state.accessApproved ?
-          <SignInUp
-            web3={this.state.web3}
+          <contractContext.Provider value={{ contractInstance: this.state.contractInstance, web3: this.state.web3 }}>
+            <authContext.Provider value={{
+              inPrivateKeyChanged: event => this.signinInputChanged("privateKey", event.target.value),
+              inEmailChanged: event => this.signinInputChanged("signinEmail", event.target.value),
+              inPasswordChanged: event => this.signinInputChanged("signinPassword", event.target.value),
 
-            signinSignup={this.state.signinSignup}
-            signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-            submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
-
-            inPrivateKeyChanged={(event) => { this.signinInputChanged("privateKey", event.target.value) }}
-            inEmailChanged={(event) => { this.signinInputChanged("signinEmail", event.target.value) }}
-            inPasswordChanged={(event) => { this.signinInputChanged("signinPassword", event.target.value) }}
-
-            upUsernameChanged={(event) => { this.setState({ signupUsername: event.target.value }) }}
-            upEmailChanged={(event) => { this.setState({ signupEmail: event.target.value }) }}
-            upPasswordChanged={(event) => { this.setState({ signupPassword: event.target.value }) }}
-            upPasswordConfChanged={(event) => { this.setState({ signupPasswordConf: event.target.value }) }}
-          />
+              upUsernameChanged: event => this.setState({ signupUsername: event.target.value }),
+              upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
+              upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
+              upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value })
+            }}>
+              <Authentication
+              signinSignup={this.state.signinSignup}
+              signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
+              submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
+            />
+            </authContext.Provider>
+          </contractContext.Provider>
           : !this.labosMode ?
-            <UsersTemplate
-              web3={this.state.web3}
-              contractInstance={this.state.contractInstance}
-              analyses={this.state.analyses.reverse()}
-              balance={this.state.balance}
-              accountAddress={this.state.accountAddress}
-              accountPrivateKey={this.state.accountPrivateKey}
-              accountName={this.state.accountName}
-              reloadAccountInfo={this.loadAccountInfo.bind(this)}
-            />
-            : <LabosTemplate
-              web3={this.state.web3}
-              analyses={this.state.analyses.reverse()}
-              contractInstance={this.state.contractInstance}
+      <UsersTemplate
+        web3={this.state.web3}
+        contractInstance={this.state.contractInstance}
+        analyses={this.state.analyses.reverse()}
+        balance={this.state.balance}
+        accountAddress={this.state.accountAddress}
+        accountPrivateKey={this.state.accountPrivateKey}
+        accountName={this.state.accountName}
+        reloadAccountInfo={this.loadAccountInfo.bind(this)}
+      />
+      : <LabosTemplate
+        web3={this.state.web3}
+        analyses={this.state.analyses.reverse()}
+        contractInstance={this.state.contractInstance}
 
-              balance={this.state.balance}
-              accountAddress={this.state.accountAddress}
-              accountName={this.state.accountName}
-              privateKey={this.state.privateKey}
+        balance={this.state.balance}
+        accountAddress={this.state.accountAddress}
+        accountName={this.state.accountName}
+        privateKey={this.state.privateKey}
 
-              reloadAnalyses={this.loadAnalyses.bind(this)}
-            />
-        }
+        reloadAnalyses={this.loadAnalyses.bind(this)}
+      />
+  }
       </div>
     )
   }
 
-  labosMode() {
-    this.labosMode = true
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
+labosMode() {
+  this.labosMode = true
+  this.setState({ accessApproved: true })
+  this.loadAnalyses()
+}
 
-  usersMode() {
-    this.labosMode = false
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
+usersMode() {
+  this.labosMode = false
+  this.setState({ accessApproved: true })
+  this.loadAnalyses()
+}
 
-  signinInputChanged(key, value) {
-    this.setState({ [key]: value })
-  }
+signinInputChanged(key, value) {
+  this.setState({ [key]: value })
+}
 }
 
 export default App;

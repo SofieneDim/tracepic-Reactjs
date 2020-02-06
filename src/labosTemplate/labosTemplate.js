@@ -27,10 +27,6 @@ class labosTemplate extends Component {
         }
     }
 
-    componentDidMount = async () => {
-
-    }
-
     async postAnalyse(event) {
         event.preventDefault()
         this.setState({ postAnalyseLoading: true, postSubmitDisable: true })
@@ -67,8 +63,7 @@ class labosTemplate extends Component {
     }
 
     getAnalyseValue() {
-        this.setState({ secretCode: 0 })
-        this.setState({ showAnalyse: false })
+        this.setState({ secretCode: 0, showAnalyse: false })
         var url = 'http://localhost:8081/';
         var xhttp = new XMLHttpRequest();
         xhttp.responseType = 'json';
@@ -99,7 +94,6 @@ class labosTemplate extends Component {
     }
 
     async manageSecretCode() {
-
         if (this.state.isPrivate) {
             let secretCode = parseInt(Math.random() * 10000);
             let _validSecret = await this.props.contractInstance.methods.secretValid(secretCode).call();
@@ -114,7 +108,7 @@ class labosTemplate extends Component {
     }
 
     cancelPostHandler() {
-        console.log('this.state.isPrivate 2:', this.state.isPrivate)
+        this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })
     }
 
     async searchAnalyse(event) {
@@ -221,8 +215,8 @@ class labosTemplate extends Component {
                     postAnalyse={() => {this.getAnalyseValue(); this.setState({ analyseValue: '' })}}
                     postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
                     boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
-                    searchAnalyse={this.searchAnalyse.bind(this)}
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
+                    searchAnalyse={this.searchAnalyse.bind(this)}
                 />
                 {this.state.searchAnalyseResult}
                 {this.state.showAnalyse ?
@@ -242,7 +236,6 @@ class labosTemplate extends Component {
                     <div className="row" style={{ marginTop: '30px' }}>
                         <div className="col-md-2"></div>
                         <div className="col-md-8" style={{ padding: '0px' }}>
-
                             {
                                 this.state.postAnalyseLoading ?
                                     <div className="centered" style={{ margin: "20px" }}>

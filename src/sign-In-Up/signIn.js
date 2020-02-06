@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import RecoverPrivateKey from './recoverPrivateKey';
+import AuthContext from '../context/Authentication-context';
 
 class signin extends Component {
 
@@ -10,8 +11,8 @@ class signin extends Component {
         }
     }
 
-    forgetPrivateKey() {
-
+    componentDidMount() {
+        this.privateKeyInput.focus()
     }
 
     render() {
@@ -19,35 +20,44 @@ class signin extends Component {
             <div className="col-md-10">
                 {!this.state.recoverPrivateKey ?
                     <div id="sign-in-up-template">
-                        <div className="form-group" style={{ marginTop: '20px' }}>
-                            <label htmlFor="signIn-account-address" className="centered">Private Key</label>
-                            <input type="text" className="form-control"
-                                id="signIn-account-address"
-                                placeholder="Enter your address"
-                                onChange={this.props.inAddressChanged}
-                                required
-                            />
-                            <small id="emailHelp" className="form-text text-muted">Address must begin with: 0x</small>
-                        </div>
-                        <div className="form-group" style={{ marginTop: '20px' }}>
-                            <label htmlFor="signIn-account-email" className="centered">Email address</label>
-                            <input type="email" className="form-control"
-                                id="signIn-account-email" aria-describedby="emailHelp"
-                                placeholder="Enter your E-mail"
-                                onChange={this.props.inEmailChanged} 
-                                required
-                                />
-                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
-                        </div>
-                        <div className="form-group" style={{ marginTop: '20px' }}>
-                            <label htmlFor="signIn-account-password" className="centered">Password</label>
-                            <input type="password" className="form-control"
-                                id="signIn-account-password"
-                                placeholder="Enter your password"
-                                onChange={this.props.inPasswordChanged} 
-                                required
-                                />
-                        </div>
+                        <AuthContext.Consumer>
+                            {
+                                context =>
+                                    <div>
+                                        <div className="form-group" style={{ marginTop: '20px' }}>
+                                            <label htmlFor="signIn-account-address" className="centered">Private Key</label>
+                                            <input type="text" className="form-control"
+                                                id="signIn-account-address"
+                                                placeholder="Enter your address"
+                                                ref={_inputRef => this.privateKeyInput = _inputRef}
+                                                onChange={context.inPrivateKeyChanged}
+                                                required
+                                            />
+                                            <small id="emailHelp" className="form-text text-muted">Address must begin with: 0x</small>
+                                        </div>
+                                        <div className="form-group" style={{ marginTop: '20px' }}>
+                                            <label htmlFor="signIn-account-email" className="centered">Email address</label>
+                                            <input type="email" className="form-control"
+                                                id="signIn-account-email" aria-describedby="emailHelp"
+                                                placeholder="Enter your E-mail"
+                                                onChange={context.inEmailChanged}
+                                                required
+                                            />
+                                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                                        </div>
+                                        <div className="form-group" style={{ marginTop: '20px' }}>
+                                            <label htmlFor="signIn-account-password" className="centered">Password</label>
+                                            <input type="password" className="form-control"
+                                                id="signIn-account-password"
+                                                placeholder="Enter your password"
+                                                onChange={context.inPasswordChanged}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                            }
+                        </AuthContext.Consumer>
                         <div className="row" style={{ marginTop: '28px', display: 'none' }}>
                             <div className="col-md-4">
                                 <input type="file" id="keystore-file" />
@@ -83,8 +93,7 @@ class signin extends Component {
                     </div>
                     :
                     <RecoverPrivateKey
-                        web3={this.props.web3}
-                        cancel={() => this.setState({ recoverPrivateKey: false }) }
+                        cancel={() => this.setState({ recoverPrivateKey: false })}
                     />
                 }
             </div>

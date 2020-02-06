@@ -9,13 +9,6 @@ import Signup from './signup'
 
 class SignInUp extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-
-        }
-    }
-
     render() {
 
         return (
@@ -48,21 +41,7 @@ class SignInUp extends Component {
                                     <div>
                                         <div className="row">
                                             <div className="col-md-1"></div>
-                                            {this.props.signinSignup ?
-                                                <Signin
-                                                    web3={this.props.web3}
-                                                    inAddressChanged={this.props.inPrivateKeyChanged}
-                                                    inEmailChanged={this.props.inEmailChanged}
-                                                    inPasswordChanged={this.props.inPasswordChanged}
-                                                />
-                                                :
-                                                <Signup
-                                                    upUsernameChanged={this.props.upUsernameChanged}
-                                                    upEmailChanged={this.props.upEmailChanged}
-                                                    upPasswordChanged={this.props.upPasswordChanged}
-                                                    upPasswordConfChanged={this.props.upPasswordConfChanged}
-                                                />
-                                            }
+                                            { this.props.signinSignup ? <Signin/> : <Signup/> }
                                             <div className="col-md-1"></div>
                                         </div>
                                     </div>
