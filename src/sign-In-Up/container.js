@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Helmet from 'react-helmet'
-import './SignInUp.css'
+import './signInUp.css'
 
 import logo from '../imgs/LogoFdBleu@1x.png'
 import signinImage from '../imgs/signin-image.jpg'

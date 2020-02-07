@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 
-import LabosTemplate from './LabosTemplate/labosTemplate'
-import UsersTemplate from './UsersTemplate/usersTemplate'
-import Authentication from './Sign-In-Up/container'
+import LabosTemplate from './labosTemplate/labosTemplate'
+import UsersTemplate from './usersTemplate/usersTemplate'
+import Authentication from './sign-In-Up/container'
 
 import contractContext from './context/contract-context'
 import authContext from './context/Authentication-context'
