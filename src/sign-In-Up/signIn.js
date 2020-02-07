@@ -2,6 +2,15 @@ import React, { Component } from 'react'
 import RecoverPrivateKey from './recoverPrivateKey';
 import AuthContext from '../context/Authentication-context';
 
+import counterpart from 'react-translate-component'
+import Translate from 'react-translate-component'
+import en from '../languages/signin-langu/signin_en'
+import fr from '../languages/signin-langu/signin_fr'
+
+counterpart.registerTranslations('en', en)
+counterpart.registerTranslations('fr', fr)
+counterpart.setLocale('fr')
+
 class signin extends Component {
 
     constructor(props) {
@@ -13,9 +22,11 @@ class signin extends Component {
 
     componentDidMount() {
         this.privateKeyInput.focus()
+        console.log(counterpart.translate('signin').props.content)
     }
 
     render() {
+
         return (
             <div className="col-md-10">
                 {!this.state.recoverPrivateKey ?
@@ -25,28 +36,46 @@ class signin extends Component {
                                 context =>
                                     <div>
                                         <div className="form-group" style={{ marginTop: '20px' }}>
-                                            <label htmlFor="signIn-account-address" className="centered">Private Key</label>
+
+                                            <Translate content="privateKey" component="b"className="centered" style={{ marginBottom: '10px' }} />
+
                                             <input type="text" className="form-control"
                                                 id="signIn-account-address"
-                                                placeholder="Enter your address"
+                                                placeholder="Enter your private key"
                                                 ref={_inputRef => this.privateKeyInput = _inputRef}
                                                 onChange={context.inPrivateKeyChanged}
                                                 required
                                             />
-                                            <small id="emailHelp" className="form-text text-muted">Address must begin with: 0x</small>
+                                            {/* <Translate
+                                                component="input"
+                                                type="text"
+                                                className="form-control"
+                                                attributes={{
+                                                    placeholder: 'privateKey_placeholder'
+                                                }}
+                                            /> */}
+
+                                            <Translate content="privateKey_placeholder" component="small" className="form-text text-muted" />
+
                                         </div>
                                         <div className="form-group" style={{ marginTop: '20px' }}>
-                                            <label htmlFor="signIn-account-email" className="centered">Email address</label>
+
+                                            <Translate content="emailAddress" component="b" className="centered" style={{ marginBottom: '10px' }} />
+
                                             <input type="email" className="form-control"
                                                 id="signIn-account-email" aria-describedby="emailHelp"
                                                 placeholder="Enter your E-mail"
                                                 onChange={context.inEmailChanged}
                                                 required
                                             />
-                                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+
+                                            <Translate content="privateKey_helper" component="small" className="form-text text-muted" />
+
                                         </div>
                                         <div className="form-group" style={{ marginTop: '20px' }}>
-                                            <label htmlFor="signIn-account-password" className="centered">Password</label>
+
+                                            <Translate content="password" component="b" className="centered" style={{ marginBottom: '10px' }} />
+
                                             <input type="password" className="form-control"
                                                 id="signIn-account-password"
                                                 placeholder="Enter your password"
