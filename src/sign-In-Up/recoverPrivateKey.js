@@ -16,10 +16,6 @@ class RecoverPrivateKey extends Component {
         }
     }
 
-    componentDidMount(){
-        console.log('context:', this.context)
-    }
-
     readKeyStore() {
         const keystore = document.getElementById("keystoreFile").files[0]
         const web3 = this.context.web3

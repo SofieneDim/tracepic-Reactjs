@@ -29,21 +29,6 @@ class App extends Component {
     }
   }
 
-
-  developSigninHandler() {
-    console.log('developSigninHandler:')
-
-    if (!true) {
-      this.setState({ accountAddress: "0xBE62aD6420E3CB8493812Cd516Fdc06fa738F0f4" })
-      this.labosMode()
-    } else {
-      this.setState({ accountAddress: "0x022c47EDdCea320fcf406eBAed22D926243FeaF9" })
-      this.usersMode()
-    }
-    this.loadAccountInfo()
-  }
-
-
   async componentDidMount() {
     await this.initContract()
   }
@@ -68,7 +53,6 @@ class App extends Component {
       const analyse = await this.state.contractInstance.methods.analyses(i).call()
       analyses.push(analyse)
     }
-    console.log('analyses:', analyses)
     this.setState({ analyses })
   }
 

@@ -103,7 +103,6 @@ class UsersTemplate extends Component {
         event.preventDefault()
         let privateAnalyseResult = await this.props.contractInstance.methods.privateAnalyses(this.state.secretCode).call()
         privateAnalyseResult = await this.props.contractInstance.methods.analyses(privateAnalyseResult.id).call() // ***** .id rmv
-        console.log('privateAnalyseResult:', privateAnalyseResult)
         if (privateAnalyseResult.id == 0) {
             console.log("analyse not found")
         } else {
