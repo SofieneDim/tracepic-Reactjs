@@ -1,15 +1,6 @@
 import React, { Component } from 'react'
-import RecoverPrivateKey from './recoverPrivateKey';
-import AuthContext from '../context/Authentication-context';
-
-import counterpart from 'react-translate-component'
-import Translate from 'react-translate-component'
-import en from '../languages/signin-langu/signin_en'
-import fr from '../languages/signin-langu/signin_fr'
-
-counterpart.registerTranslations('en', en)
-counterpart.registerTranslations('fr', fr)
-counterpart.setLocale('fr')
+import RecoverPrivateKey from './recoverPrivateKey'
+import AuthContext from '../context/Authentication-context'
 
 class signin extends Component {
 

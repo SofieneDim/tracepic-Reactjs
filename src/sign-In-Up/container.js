@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import Helmet from 'react-helmet'
-import './signInUp.css'
+import './SignInUp.css'
 
 import logo from '../imgs/LogoFdBleu@1x.png'
 import signinImage from '../imgs/signin-image.jpg'
-import Signin from './signin'
+import Signin from './signIn'
 import Signup from './signup'
 
 class SignInUp extends Component {
