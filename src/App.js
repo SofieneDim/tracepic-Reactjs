@@ -83,6 +83,7 @@ class App extends Component {
       console.error(error);
     }
   }
+  
 
   async signupHandler(event) {
     event.preventDefault()
