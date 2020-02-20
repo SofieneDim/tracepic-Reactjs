@@ -1,14 +1,17 @@
-import { TRACEPIC_ABI, TRACEPIC_ADDRESS } from './contract_ABI_Address'
+import { TRACEPIC_ABI, TRACEPIC_ADDRESS, TRACEPIC_COINBASE } from './contract_ABI_Address'
 import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
+import i18n from "i18next"
 
 import LabosTemplate from './labosTemplate/labosTemplate'
 import UsersTemplate from './usersTemplate/usersTemplate'
-import Authentication from './sign-In-Up/container'
+import Authentication from './authentication/container'
 
 import contractContext from './context/contract-context'
 import authContext from './context/Authentication-context'
+import LanguagesContext from './context/languages-context'
+import { withNamespaces } from 'react-i18next'
 
 class App extends Component {
 
@@ -29,14 +32,18 @@ class App extends Component {
     }
   }
 
+  changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  }
+
   async componentDidMount() {
     await this.initContract()
   }
 
   async initContract() {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545")
+    const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7652")//"http://51.178.53.74:7652")
     this.setState({ web3 })
-    const contractInstance = new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
+    const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
     this.setState({ contractInstance })
   }
 
@@ -83,7 +90,6 @@ class App extends Component {
       console.error(error);
     }
   }
-  
 
   async signupHandler(event) {
     event.preventDefault()
@@ -91,21 +97,22 @@ class App extends Component {
       return console.log("Password doesn't match")
     }
     const account = await this.state.web3.eth.accounts.create()
-    const keystore = this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
-    const encoded_tx = this.state.contractInstance.methods
-      .signup(account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false).encodeABI()
+    const encoded_tx = this.state.contractInstance.methods.signup(
+      account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false).encodeABI();
     var rawTransaction = {
-      "from": account.address,
+      "from": TRACEPIC_COINBASE.address,
       "data": encoded_tx,
       "to": TRACEPIC_ADDRESS,
       "gas": 500000
     }
-    this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
-      .then(signedTx => {
-        console.log('signedTx:', signedTx)
-        this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-      })
+    const keystore = this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
+
+    // sign and send transaction
+    this.state.web3.eth.accounts.signTransaction(rawTransaction, TRACEPIC_COINBASE.privateKey)
+      .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+
       .then(receipt => {
+        console.log('receipt:', receipt)
         const fileName = this.state.signupUsername + " " + account.address
         this.keystoreDownload(fileName, JSON.stringify(keystore))
         this.setState({ accountAddress: account.address, accountName: this.state.signupUsername })
@@ -128,70 +135,104 @@ class App extends Component {
   }
 
   render() {
+    const { t } = this.props
     return (
-      <div className="container">
-        {!this.state.accessApproved ?
-          <contractContext.Provider value={{ contractInstance: this.state.contractInstance, web3: this.state.web3 }}>
-            <authContext.Provider value={{
-              inPrivateKeyChanged: event => this.signinInputChanged("privateKey", event.target.value),
-              inEmailChanged: event => this.signinInputChanged("signinEmail", event.target.value),
-              inPasswordChanged: event => this.signinInputChanged("signinPassword", event.target.value),
+      <div>
+        <div style={{ float: "right" }}>
+          <button
+            className="btn btn-info"
+            style={{ width: "50px" }}
+            onClick={() => this.changeLanguage('fr')}
+          >fr</button>
+          <button
+            className="btn btn-primary"
+            style={{ width: "50px" }}
+            onClick={() => this.changeLanguage('en')}
+          >en</button>
+        </div >
+        <div className="container" >
+          <LanguagesContext.Provider value={
+            {
+              setFR: () => this.changeLanguage('fr'),
+              setEN: () => this.changeLanguage('en'),
+              t: t
+            }
+          } >
+            {!this.state.accessApproved ?
 
-              upUsernameChanged: event => this.setState({ signupUsername: event.target.value }),
-              upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
-              upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
-              upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value })
-            }}>
-              <Authentication
-              signinSignup={this.state.signinSignup}
-              signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-              submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
-            />
-            </authContext.Provider>
-          </contractContext.Provider>
-          : !this.labosMode ?
-      <UsersTemplate
-        web3={this.state.web3}
-        contractInstance={this.state.contractInstance}
-        analyses={this.state.analyses.reverse()}
-        balance={this.state.balance}
-        accountAddress={this.state.accountAddress}
-        accountPrivateKey={this.state.accountPrivateKey}
-        accountName={this.state.accountName}
-        reloadAccountInfo={this.loadAccountInfo.bind(this)}
-      />
-      : <LabosTemplate
-        web3={this.state.web3}
-        analyses={this.state.analyses.reverse()}
-        contractInstance={this.state.contractInstance}
+              <contractContext.Provider value={
+                {
+                  contractInstance: this.state.contractInstance,
+                  web3: this.state.web3,
+                  setFR: () => this.changeLanguage('fr'),
+                  setEN: () => this.changeLanguage('en'),
+                  t: t
+                }
+              }>
+                <authContext.Provider value={
+                  {
+                    inPrivateKeyChanged: event => this.signinInputChanged("privateKey", event.target.value),
+                    inEmailChanged: event => this.signinInputChanged("signinEmail", event.target.value),
+                    inPasswordChanged: event => this.signinInputChanged("signinPassword", event.target.value),
 
-        balance={this.state.balance}
-        accountAddress={this.state.accountAddress}
-        accountName={this.state.accountName}
-        privateKey={this.state.privateKey}
+                    upUsernameChanged: event => this.setState({ signupUsername: event.target.value }),
+                    upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
+                    upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
+                    upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value })
+                  }
+                }>
+                  <Authentication
+                    signinSignup={this.state.signinSignup}
+                    signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
+                    submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
+                  />
+                </authContext.Provider >
+              </contractContext.Provider >
+              : !this.labosMode ?
+                <UsersTemplate
+                  web3={this.state.web3}
+                  contractInstance={this.state.contractInstance}
+                  analyses={this.state.analyses.reverse()}
+                  balance={this.state.balance}
+                  accountAddress={this.state.accountAddress}
+                  accountPrivateKey={this.state.accountPrivateKey}
+                  accountName={this.state.accountName}
+                  reloadAccountInfo={this.loadAccountInfo.bind(this)}
+                />
+                : <LabosTemplate
+                  web3={this.state.web3}
+                  analyses={this.state.analyses.reverse()}
+                  contractInstance={this.state.contractInstance}
 
-        reloadAnalyses={this.loadAnalyses.bind(this)}
-      />
-  }
+                  balance={this.state.balance}
+                  accountAddress={this.state.accountAddress}
+                  accountName={this.state.accountName}
+                  privateKey={this.state.privateKey}
+
+                  reloadAnalyses={this.loadAnalyses.bind(this)}
+                />
+            }
+          </LanguagesContext.Provider >
+        </div >
       </div>
     )
   }
 
-labosMode() {
-  this.labosMode = true
-  this.setState({ accessApproved: true })
-  this.loadAnalyses()
+  labosMode() {
+    this.labosMode = true
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
+  usersMode() {
+    this.labosMode = false
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
+  signinInputChanged(key, value) {
+    this.setState({ [key]: value })
+  }
 }
 
-usersMode() {
-  this.labosMode = false
-  this.setState({ accessApproved: true })
-  this.loadAnalyses()
-}
-
-signinInputChanged(key, value) {
-  this.setState({ [key]: value })
-}
-}
-
-export default App;
+export default withNamespaces()(App);

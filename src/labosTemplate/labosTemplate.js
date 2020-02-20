@@ -8,7 +8,11 @@ import Web3 from 'web3';
 import ipfs from '../ipfs/ipfsConfig';
 import { TRACEPIC_ADDRESS } from '../contract_ABI_Address';
 
+import languagesContext from '../context/languages-context';
+
 class labosTemplate extends Component {
+
+    static contextType = languagesContext
 
     constructor(props) {
         super(props)
@@ -25,6 +29,12 @@ class labosTemplate extends Component {
             postSubmitDisable: true,
             postAnalyseLoading: false
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const propsChanged = this.props.analyses !== nextProps.analyses || this.props.balance !== nextProps.balance
+        const stateChanged = this.state !== nextState
+        return propsChanged || stateChanged
     }
 
     async postAnalyse(event) {
@@ -150,9 +160,9 @@ class labosTemplate extends Component {
     }
 
     render() {
-
+        const { t } = this.context
         const analyses = (
-            <div>
+            <div id="analysis_placeholder">
                 {
                     this.props.analyses.map((analyse) => {
                         return this.state.showSelfPosted ?
@@ -163,13 +173,13 @@ class labosTemplate extends Component {
                                 color={'black'}
                                 note={
                                     analyse.buyer !== "0x0000000000000000000000000000000000000000"
-                                        ? "Sold by: " + analyse.buyer
-                                        : "Not sold yet"
+                                        ? t('soldBy') + ": " + analyse.buyer
+                                        : t('notSoldYet')
                                 }
                                 state={
                                     analyse.secret !== "0"
-                                        ? "Private analyse"
-                                        : "Public analyse"
+                                        ? t('privateAnalysis')
+                                        : t('publicAnalysis')
                                 }
                                 description={analyse.description}
                             />
@@ -181,13 +191,13 @@ class labosTemplate extends Component {
                                     color={'grey'}
                                     note={
                                         analyse.buyer !== "0x0000000000000000000000000000000000000000"
-                                            ? "Sold by: " + analyse.buyer
-                                            : "Not sold yet"
+                                            ? t('soldBy') + ": " + analyse.buyer
+                                            : t('notSoldYet')
                                     }
                                     state={
                                         analyse.secret !== "0"
-                                            ? "Private analyse"
-                                            : "Public analyse"
+                                            ? t('privateAnalysis')
+                                            : t('publicAnalysis')
                                     }
                                     description={analyse.description}
                                 />
@@ -212,7 +222,7 @@ class labosTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
-                    postAnalyse={() => {this.getAnalyseValue(); this.setState({ analyseValue: '' })}}
+                    postAnalyse={() => { this.getAnalyseValue(); this.setState({ analyseValue: '' }) }}
                     postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
                     boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}

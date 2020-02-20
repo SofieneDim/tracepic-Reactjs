@@ -43,36 +43,37 @@ class RecoverPrivateKey extends Component {
                 <div className="row">
                     <div className="col-md-8" >
                         <div className="col-md-12" >
-                            <button type='button' 
-                            id="private-recover-back"
-                            onClick={this.props.cancel}
+                            <button type='button'
+                                id="private-recover-back"
+                                onClick={this.props.cancel}
                             />
                         </div>
                         <div className="col-md-12" style={{ marginTop: 28, marginBottom: 20 }}>
-                            <input type="file" id="keystoreFile"
-                                required
-                            />
+                            <input type="file" id="keystoreFile" required />
                         </div>
                         <div className="col-md-12" style={{ marginTop: 30 }}>
-                            <label htmlFor="password_keystore">Password</label>
+                            <label htmlFor="password_keystore">
+                                <b>{this.context.t('password')}</b>
+                            </label>
                             <input type="password" className="form-control"
-                                placeholder="Type your password"
+                                placeholder={this.context.t('password_placeholder')}
                                 onChange={(event) => this.setState({ keystorePassword: event.target.value })}
                                 required
                             />
                         </div>
                     </div>
-                    <div className="col-md-4" style={{marginTop: '70px'}}>
+                    <div className="col-md-4" style={{ marginTop: '70px' }}>
                         <img src={privateKeyRecovery} id='privateKeyRecovery' />
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="row" style={{ marginTop: 10 }}>
                         <div className="col-md-4">
-                            <button className="btn btn-info" type="submit"
+                            <button
+                                className="btn btn-info" type="submit"
                                 style={{ marginBottom: 20 }}
                                 onClick={this.readKeyStore.bind(this)}
-                            >Get Private Key</button>
+                            > {this.context.t('getPrivateKey')} </button>
                         </div>
                         {
                             this.state.loading ?

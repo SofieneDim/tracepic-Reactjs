@@ -5,6 +5,8 @@ import NavigationBar from './usersNavigationBar'
 import AnalysesTemplate from '../analysesTemplate'
 import { TRACEPIC_ADDRESS } from '../contract_ABI_Address'
 
+import LanguagesContext from '../context/languages-context'
+
 class UsersTemplate extends Component {
 
     constructor(props) {
@@ -29,7 +31,7 @@ class UsersTemplate extends Component {
     async loadAnalyses() {
         const analysesIds = await this.props.contractInstance.methods.getAllAnalyses().call()
         const analysesForSale = []
-        for (let i = 1; i <= analysesIds.length; i++) {
+        for (let i = 1; i <= analysesIds.length; i) {
 
             const analyse = await this.props.contractInstance.methods.analyses(i).call()
             analysesForSale.push(analyse)
@@ -44,7 +46,7 @@ class UsersTemplate extends Component {
         const selfBougthAnalyses = []
         let analysesLeftIndex = []
         let analysesRightIndex = []
-        for (let i = 0; i < analyses.length; i++) {
+        for (let i = 0; i < analyses.length; i) {
             if (analyses[i].secret == 0 && analyses[i].buyer == 0x0) {
                 if (i % 2 === 0) {
                     analysesLeftIndex.push(analyses[i])
@@ -219,7 +221,7 @@ class UsersTemplate extends Component {
                 />
                 {
                     this.state.buyLoading ?
-                        <div className="centered" style={{marginTop: "20px"}}>
+                        <div className="centered" style={{ marginTop: "20px" }}>
                             <div className="loader"></div>
                         </div>
                         : null
@@ -231,18 +233,22 @@ class UsersTemplate extends Component {
                             {this.state.searchAnalyseResult}
                             {
                                 this.state.showPrivateSearch ?
-                                    <div className="row" style={{ marginTop: "50px" }}>
-                                        <div className="col-md-12 centered">
-                                            <p><strong>Type your analyse's secret code:</strong></p>
-                                        </div>
-                                        <div className="col-md-12 centered">
-                                            <form onSubmit={this.getPrivateAnalyseHandler.bind(this)}>
-                                                <input type="number" placeholder="Enter your code here..."
-                                                    onChange={this.secretCodeHandler.bind(this)} required />
-                                                <button type="submit">Submit</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                    <LanguagesContext.Consumer>
+                                        {context =>
+                                            <div className="row" style={{ marginTop: "50px" }}>
+                                                <div className="col-md-12 centered">
+                                                    <b>{context.t('typeSecretCode')}</b>
+                                                </div>
+                                                <div className="col-md-12 centered">
+                                                    <form onSubmit={this.getPrivateAnalyseHandler.bind(this)}>
+                                                        <input type="number" placeholder={context.t('typeSecretCode_placeholder')}
+                                                            onChange={this.secretCodeHandler.bind(this)} required />
+                                                        <button type="submit">Submit</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        }
+                                    </LanguagesContext.Consumer>
                                     :
                                     this.state.privateAnalyseResult
                                         ||

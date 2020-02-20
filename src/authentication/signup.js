@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import AuthContext from '../context/Authentication-context'
+import languagesContext from '../context/languages-context'
 
 class signup extends Component {
+
+    static contextType = languagesContext
 
     constructor(props) {
         super(props)
@@ -14,6 +17,7 @@ class signup extends Component {
     }
 
     render() {
+        const { t } = this.context
         return (
             <div className="row col-md-10" style={{ marginBottom: "40px" }}>
                 <AuthContext.Consumer>
@@ -22,10 +26,12 @@ class signup extends Component {
                             <div className="row col-md-12">
                                 <div className="col-md-12">
                                     <div className="form-group" style={{ marginTop: '20px' }}>
-                                        <label htmlFor="signup-username" className="centered">Username</label>
+                                        <label htmlFor="signup-username" className="centered">
+                                            <b>{t('username')}</b>
+                                        </label>
                                         <input type="text" className="form-control"
                                             id="signup-username"
-                                            placeholder="Enter your username"
+                                            placeholder={t('username-placeholder')}
                                             ref={_inputRef => this.userNameInput = _inputRef}
                                             onChange={context.upUsernameChanged}
                                         />
@@ -33,30 +39,36 @@ class signup extends Component {
                                 </div>
                                 <div className="col-md-12">
                                     <div className="form-group" style={{ marginTop: '20px' }}>
-                                        <label htmlFor="signup-email" className="centered">E-mail</label>
+                                        <label htmlFor="signup-email" className="centered">
+                                            <b>{t('emailAddress')}</b>
+                                        </label>
                                         <input type="text" className="form-control"
                                             id="signup-email"
-                                            placeholder="Enter your e-mail"
+                                            placeholder={t('emailAddress_placeholder')}
                                             onChange={context.upEmailChanged}
                                         />
                                     </div>
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group" style={{ marginTop: '20px' }}>
-                                        <label htmlFor="signup-password" className="centered">Password</label>
+                                        <label htmlFor="signup-password" className="centered">
+                                            <b>{t('password')}</b>
+                                        </label>
                                         <input type="text" className="form-control"
                                             id="-signup-password"
-                                            placeholder="Enter your password"
+                                            placeholder={t('password_placeholder')}
                                             onChange={context.upPasswordChanged}
                                         />
                                     </div>
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group" style={{ marginTop: '20px' }}>
-                                        <label htmlFor="signup-password-cnf" className="centered">Confirm your password</label>
+                                        <label htmlFor="signup-password-cnf" className="centered">
+                                            <b>{t('password-conf')}</b>
+                                        </label>
                                         <input type="text" className="form-control"
                                             id="signup-password-cnf"
-                                            placeholder="Renter your password"
+                                            placeholder={t('password-conf-placeholder')}
                                             onChange={context.upPasswordConfChanged}
                                         />
                                     </div>

@@ -7,10 +7,14 @@ import signinImage from '../imgs/signin-image.jpg'
 import Signin from './signIn'
 import Signup from './signup'
 
+import languagesContext from '../context/languages-context'
+
 class SignInUp extends Component {
 
-    render() {
+    static contextType = languagesContext
 
+    render() {
+        const { t } = this.context
         return (
             <div>
                 <Helmet>
@@ -28,8 +32,10 @@ class SignInUp extends Component {
                             <div className="col-md-1"></div>
 
                             <div className="row col-md-3 centered">
-                                <div className="col-md-12 centered" style={{ marginTop: '20px'}}>
-                                    <h2 id='sign-in-up-title'>{this.props.signinSignup ? "Sign In" : "Sign Up"}</h2>
+                                <div className="col-md-12 centered" style={{ marginTop: '20px' }}>
+                                    <h2 id='sign-in-up-title'>
+                                        {this.props.signinSignup ? t('signin') : t('signup')}
+                                    </h2>
                                 </div>
                                 <div className="col-md-12 centered">
                                     <img src={signinImage} alt="" />
@@ -41,7 +47,7 @@ class SignInUp extends Component {
                                     <div>
                                         <div className="row">
                                             <div className="col-md-1"></div>
-                                            { this.props.signinSignup ? <Signin/> : <Signup/> }
+                                            {this.props.signinSignup ? <Signin /> : <Signup />}
                                             <div className="col-md-1"></div>
                                         </div>
                                     </div>
@@ -49,13 +55,13 @@ class SignInUp extends Component {
                                         <div className='col-md-3'>
                                             <button className="btn btn-primary" type="button"
                                                 style={{ backgroundColor: '#3384CC', float: 'left' }} onClick={this.props.signup}
-                                            >{this.props.signinSignup ? "Go to Sign Up" : "Go to Sign In"}</button>
+                                            >{this.props.signinSignup ? t('goToSignup') : t('goToSignin')}</button>
                                         </div>
                                         <div className='col-md-8'>
                                             <button className="btn btn-primary signin_botton" type="submit"
                                                 onClick={this.props.submit}
                                                 style={{ backgroundColor: '#3333CC', float: 'right' }}
-                                            >Connect</button>
+                                            >{t('connect')}</button>
                                         </div>
                                     </div>
                                 </form>
