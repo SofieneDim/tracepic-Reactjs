@@ -31,11 +31,9 @@ class UsersTemplate extends Component {
     async loadAnalyses() {
         const analysesIds = await this.props.contractInstance.methods.getAllAnalyses().call()
         const analysesForSale = []
-        for (let i = 1; i <= analysesIds.length; i) {
-
+        for (let i = 1; i <= analysesIds.length; i++) {
             const analyse = await this.props.contractInstance.methods.analyses(i).call()
             analysesForSale.push(analyse)
-
         }
         this.setState({ analysesForSale })
         this.sortAnalyses()
@@ -46,7 +44,7 @@ class UsersTemplate extends Component {
         const selfBougthAnalyses = []
         let analysesLeftIndex = []
         let analysesRightIndex = []
-        for (let i = 0; i < analyses.length; i) {
+        for (let i = 0; i < analyses.length; i++) {
             if (analyses[i].secret == 0 && analyses[i].buyer == 0x0) {
                 if (i % 2 === 0) {
                     analysesLeftIndex.push(analyses[i])

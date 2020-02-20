@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   async initContract() {
-    const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7652")//"http://51.178.53.74:7652")
+    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7652")//"http://127.0.0.1:7652")
     this.setState({ web3 })
     const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
     this.setState({ contractInstance })
