@@ -13,6 +13,9 @@ const labosNavigationBar = (props) => {
                 <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.postAnalyse}>
                   {context.t('postAnalysis')}
                 </button>
+                <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.sendEther}>
+                  {context.t('sendEther')}
+                </button>
                 <button className="btn labos-btn-custom btn-lg" onClick={props.postedAnalyses}>
                   {context.t('myPostedAnalysis')}
                 </button>

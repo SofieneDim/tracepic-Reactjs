@@ -50,5 +50,10 @@
     "privateAnalysis": "Analyse Privée",
     "showSecret": "Afficher le secret",
     "goToContent": "Voir Résultat",
-    "buy": "Acheter"
+    "buy": "Acheter",
+    "sendEther": "Envoyer d'éther ◊",
+    "To": "à",
+    "Send": "Envoyer",
+    "sendEthComplete": "Transaction envoyée avec succès",
+    "clientBalance": "Le solde de votre client est maintenant:"
 }

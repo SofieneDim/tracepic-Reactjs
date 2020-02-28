@@ -27,7 +27,11 @@ class labosTemplate extends Component {
             isPrivate: false,
             secretCode: 0,
             postSubmitDisable: true,
-            postAnalyseLoading: false
+            postAnalyseLoading: false,
+            showSendEtherPlace: false,
+            sendEthTo: "",
+            sendEthValue: "",
+            sendEthComplete: false
         }
     }
 
@@ -159,6 +163,28 @@ class labosTemplate extends Component {
         })
     }
 
+    sendEtherHandler = async () => {
+        const _value = Web3.utils.toWei(this.state.sendEthValue, "ether")
+        var rawTransaction = {
+            from: this.props.accountAddress,
+            to: this.state.sendEthTo,
+            value: _value,
+            gas: 500000
+        }
+        await this.props.web3.eth.accounts.signTransaction(rawTransaction, this.props.privateKey)
+            .then(signedTx => this.props.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+            .then(async receipt => {
+                console.log('receipt:', receipt)
+                let clientBalance = await this.props.web3.eth.getBalance(this.state.sendEthTo)
+                clientBalance = this.props.web3.utils.fromWei(clientBalance, "ether")
+                this.setState({ clientBalance, sendEthComplete: true })
+            })
+            .catch(err => {
+                return console.error(err)
+            });
+
+    }
+
     render() {
         const { t } = this.context
         const analyses = (
@@ -208,7 +234,7 @@ class labosTemplate extends Component {
         )
 
         return (
-            <div >
+            <div>
                 <div className="jumbotron" id="labos-jumbotron"></div>
                 <div className="row">
                     <div className="col-md-3">
@@ -222,12 +248,51 @@ class labosTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
+                    sendEther={() => { this.setState({ showSendEtherPlace: true }) }}
                     postAnalyse={() => { this.getAnalyseValue(); this.setState({ analyseValue: '' }) }}
                     postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
                     boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                     searchAnalyse={this.searchAnalyse.bind(this)}
                 />
+
+                {this.state.showSendEtherPlace ?
+                    <div className="row centered" style={{ border: 'solid 3px blue', margin: '30px' }}>
+                        {
+                            !this.state.sendEthComplete ?
+
+                                <form onSubmit={this.sendEtherHandler}>
+                                    <div className="col-md-12" style={{ margin: '20px' }}>
+                                        <label style={{ marginRight: '10px' }}>
+                                            {t('To')} :
+                            </label>
+                                        <input type="text" onChange={(e) => this.setState({ sendEthTo: e.target.value })}></input>
+                                    </div>
+                                    <div className="col-md-12" style={{ margin: '10px' }}>
+                                        <label style={{ marginRight: '10px' }}>
+                                            {t('value')} :
+                            </label>
+                                        <input type="number" onChange={(e) => this.setState({ sendEthValue: e.target.value })}></input>
+                                    </div>
+                                    <div className="col-md-12 centered" style={{ margin: '10px' }}>
+                                        <button className="btn btn-info">
+                                            {t('Send')}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                :
+                                <div>
+                                    <h2 style={{ color: 'green', margin: '20px' }}>
+                                        {t('sendEthComplete')}
+                                    </h2>
+                                    <h3>{t('clientBalance') + " " + this.state.clientBalance}</h3>
+                                </div>
+                        }
+                    </div>
+                    : null
+                }
+
                 {this.state.searchAnalyseResult}
                 {this.state.showAnalyse ?
                     this.state.showSelfPosted ?

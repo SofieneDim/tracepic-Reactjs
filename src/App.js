@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   async initContract() {
-    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7652")//"http://127.0.0.1:7652")
+    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")//"http://127.0.0.1:7652")
     this.setState({ web3 })
     const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
     this.setState({ contractInstance })
@@ -67,28 +67,29 @@ class App extends Component {
     event.preventDefault()
     const accountInfo = await this.state.web3.eth.accounts.privateKeyToAccount(this.state.privateKey)
     this.setState({ accountAddress: accountInfo.address, accountPrivateKey: accountInfo.privateKey })
+    var accountReceipt = ""
     try {
-      const accountReceipt = await this.state.contractInstance.methods
+      accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.accountAddress).call()
-      if (accountReceipt[1] == 0x0) {
-        return console.log("account doesn't exist")
-      }
-      if (this.state.signinEmail !== accountReceipt[3]) {
-        return console.log("wrong email address")
-      }
-      if (this.state.signinPassword !== accountReceipt[4]) {
-        return console.log("wrong password")
-      }
-      this.setState({ accountName: accountReceipt[2] })
-      if (accountReceipt[5]) {
-        this.labosMode()
-      } else {
-        this.usersMode()
-      }
-      this.loadAccountInfo()
     } catch (error) {
-      console.error(error);
+      return console.error(error);
     }
+    if (accountReceipt[1] == 0x0) {
+      return console.log("account doesn't exist")
+    }
+    if (this.state.signinEmail !== accountReceipt[3]) {
+      return console.log("wrong email address")
+    }
+    if (this.state.signinPassword !== accountReceipt[4]) {
+      return console.log("wrong password")
+    }
+    this.setState({ accountName: accountReceipt[2] })
+    if (accountReceipt[5]) {
+      this.labosMode()
+    } else {
+      this.usersMode()
+    }
+    this.loadAccountInfo()
   }
 
   async signupHandler(event) {
@@ -120,7 +121,7 @@ class App extends Component {
         this.loadAccountInfo()
       })
       .catch(err => {
-        console.error(err)
+        return console.error(err)
       });
   }
 
