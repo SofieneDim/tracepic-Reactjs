@@ -12,7 +12,9 @@ class RecoverPrivateKey extends Component {
         this.state = {
             keystorePassword: '',
             loading: false,
-            finish: false
+            finish: false,
+            addressResult: '',
+            privateKeyResult: ''
         }
     }
 
@@ -21,17 +23,23 @@ class RecoverPrivateKey extends Component {
         const web3 = this.context.web3
         const keystorePassword = this.state.keystorePassword
         if (!this.state.keystorePassword) { return console.log("Please upload your key-store") }
-        if (keystore == undefined) { return console.log("Please upload your key-store") }
+        if (keystore == undefined) { return console.log("Please re-upload your key-store") }
         this.setState({ loading: true, finish: false })
-        const fileReader = new FileReader();
+        let fileReader = new FileReader()
+        let decryptedAccount = null
         fileReader.onload = (fileLoadedEvent) => {
             const textFromFileLoaded = fileLoadedEvent.target.result
             try {
-                const decryptedAccount = web3.eth.accounts.decrypt(textFromFileLoaded, keystorePassword)
-                this.setState({ addressResult: decryptedAccount.address, privateKeyResult: decryptedAccount.privateKey, loading: false, finish: true })
+                decryptedAccount = web3.eth.accounts.decrypt(textFromFileLoaded, keystorePassword)
             } catch (error) {
                 return console.error(error)
             }
+            this.setState({
+                addressResult: decryptedAccount.address,
+                privateKeyResult: decryptedAccount.privateKey,
+                loading: false,
+                finish: true
+            })
         }
         fileReader.readAsText(keystore, "UTF-8");
     }
@@ -70,7 +78,7 @@ class RecoverPrivateKey extends Component {
                     <div className="row" style={{ marginTop: 10 }}>
                         <div className="col-md-4">
                             <button
-                                className="btn btn-info" type="submit"
+                                className="btn btn-info" type="button"
                                 style={{ marginBottom: 20 }}
                                 onClick={this.readKeyStore.bind(this)}
                             > {this.context.t('getPrivateKey')} </button>
@@ -103,6 +111,15 @@ class RecoverPrivateKey extends Component {
                             </div>
                             <div className="col-md-12 mb-3 centered">
                                 <p />{this.state.privateKeyResult}
+                            </div>
+                            <div className="col-md-12 mb-3 centered">
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => this.props.enter(this.state.addressResult, this.state.privateKeyResult)}
+                                    type="button"
+                                >
+                                    {this.context.t('enter')}
+                                </button>
                             </div>
                         </div>
                         : null

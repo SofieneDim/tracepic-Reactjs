@@ -24,12 +24,12 @@ class signin extends Component {
         const { t } = this.context
 
         return (
-            <div className="col-md-10" >
-                {!this.state.recoverPrivateKey ?
-                    <div id="sign-in-up-template" >
-                        <AuthContext.Consumer>
-                            {
-                                context =>
+            <AuthContext.Consumer>
+                {
+                    context =>
+                        <div className="col-md-10" >
+                            {!this.state.recoverPrivateKey ?
+                                <div id="sign-in-up-template" >
                                     <div>
                                         <div className="form-group" style={{ marginTop: '20px' }
                                         }>
@@ -73,16 +73,18 @@ class signin extends Component {
                                             />
                                         </div >
                                     </div >
+
+                                    <a href="#" onClick={() => this.setState({ recoverPrivateKey: true })}> {t('privateKeyForgotten')}</a >
+                                </div >
+                                :
+                                <RecoverPrivateKey
+                                    enter={(address, privatekey) => context.setAccountInfo(address, privatekey)}
+                                    cancel={() => this.setState({ recoverPrivateKey: false })}
+                                />
                             }
-                        </AuthContext.Consumer >
-                        <a href="#" onClick={() => this.setState({ recoverPrivateKey: true })}> {t('privateKeyForgotten')}</a >
-                    </div >
-                    :
-                    <RecoverPrivateKey
-                        cancel={() => this.setState({ recoverPrivateKey: false })}
-                    />
+                        </div >
                 }
-            </div >
+            </AuthContext.Consumer >
         )
     }
 }

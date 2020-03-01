@@ -6,7 +6,7 @@ import i18n from "i18next"
 
 import LabosTemplate from './labosTemplate/labosTemplate'
 import UsersTemplate from './usersTemplate/usersTemplate'
-import Authentication from './authentication/container'
+import Authentication from './authentication/authentication'
 
 import contractContext from './context/contract-context'
 import authContext from './context/Authentication-context'
@@ -22,13 +22,16 @@ class App extends Component {
       balance: null,
       contractInstance: null,
       analyses: [],
-      accountaddress: '',
+      accountAddress: '',
+      privateKey: '',
       signinEmail: '',
       signinPassword: '',
       accessApproved: false,
       laboMode: false,
       metamaskExist: false,
-      signinSignup: true
+      showSignupResult: false,
+      signinSignup: true,
+      signupLoad: false
     }
   }
 
@@ -50,7 +53,7 @@ class App extends Component {
   async loadAccountInfo() {
     let balance = await this.state.web3.eth.getBalance(this.state.accountAddress)
     balance = this.state.web3.utils.fromWei(balance, "ether")
-    this.setState({ accountAddress: this.state.accountAddress, balance })
+    this.setState({ balance })
   }
 
   async loadAnalyses() {
@@ -94,7 +97,9 @@ class App extends Component {
 
   async signupHandler(event) {
     event.preventDefault()
+    this.setState({ signupLoad: true })
     if (this.state.signupPassword !== this.state.signupPasswordConf) {
+      this.setState({ signupLoad: false })
       return console.log("Password doesn't match")
     }
     const account = await this.state.web3.eth.accounts.create()
@@ -116,11 +121,13 @@ class App extends Component {
         console.log('receipt:', receipt)
         const fileName = this.state.signupUsername + " " + account.address
         this.keystoreDownload(fileName, JSON.stringify(keystore))
-        this.setState({ accountAddress: account.address, accountName: this.state.signupUsername })
-        this.usersMode()
-        this.loadAccountInfo()
+        this.setState({ accountAddress: account.address, accountName: this.state.signupUsername, privateKey: account.privateKey })
+        console.log('this.state.accountAddress:', this.state.accountAddress)
+        console.log('this.state.privateKey:', this.state.privateKey)
+        this.setState({ showSignupResult: true, signupLoad: false })
       })
       .catch(err => {
+        this.setState({ showSignupResult: false, signupLoad: false })
         return console.error(err)
       });
   }
@@ -179,11 +186,18 @@ class App extends Component {
                     upUsernameChanged: event => this.setState({ signupUsername: event.target.value }),
                     upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
                     upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
-                    upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value })
+                    upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value }),
+
+                    setAccountInfo: (address, privatekey) => this.setAccountInfo(address, privatekey)
                   }
                 }>
                   <Authentication
+                    enter={this.authenticated}
+                    loader={this.state.signupLoad}
+                    privateKey={this.state.privateKey}
+                    address={this.state.accountAddress}
                     signinSignup={this.state.signinSignup}
+                    showSignupResult={this.state.showSignupResult}
                     signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
                     submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
                   />
@@ -233,6 +247,30 @@ class App extends Component {
 
   signinInputChanged(key, value) {
     this.setState({ [key]: value })
+  }
+
+  authenticated = () => {
+    this.usersMode()
+    this.loadAccountInfo()
+  }
+
+  setAccountInfo = async (address, privatekey) => {
+    await this.setState({ accountAddress: address, accountPrivateKey: privatekey })
+    this.loadAccountInfo()
+    let accountReceipt = []
+    try {
+      accountReceipt = await this.state.contractInstance.methods
+        .getAccountByAddress(address).call()
+      console.log('accountReceipt:', accountReceipt)
+    } catch (error) {
+      return console.error(error);
+    }
+    this.setState({ accountName: accountReceipt[2] })
+    if (accountReceipt[5]) {
+      this.labosMode()
+    } else {
+      this.usersMode()
+    }
   }
 }
 

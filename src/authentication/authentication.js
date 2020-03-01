@@ -9,7 +9,7 @@ import Signup from './signup'
 
 import languagesContext from '../context/languages-context'
 
-class SignInUp extends Component {
+class Authentication extends Component {
 
     static contextType = languagesContext
 
@@ -41,13 +41,36 @@ class SignInUp extends Component {
                                     <img src={signinImage} alt="" />
                                 </div>
                             </div>
-
                             <div className="col-md-8">
                                 <form onSubmit={this.props.click}>
                                     <div>
                                         <div className="row">
                                             <div className="col-md-1"></div>
-                                            {this.props.signinSignup ? <Signin /> : <Signup />}
+                                            {this.props.signinSignup ?
+                                                <Signin />
+                                                :
+                                                !this.props.showSignupResult ?
+                                                    <Signup
+                                                        loader={this.props.loader}
+                                                    />
+                                                    :
+                                                    <div className="row centered" style={{ marginTop: '20px' }}>
+                                                        <h3 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('welcomeMsg')}</h3>
+                                                        <h4 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('address')}</h4>
+                                                        <label className="col-md-12 centered" style={{ marginTop: '20px' }}>{this.props.address}</label>
+                                                        <h4 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('privateKey')}</h4>
+                                                        <label className="col-md-12 centered" style={{ marginTop: '20px' }}>{this.props.privateKey}</label>
+                                                        <div className="col-md-12 centered" style={{ marginTop: '20px' }}>
+                                                            <button
+                                                                className="btn btn-success centered"
+                                                                style={{ marginBottom: '20px' }}
+                                                                onClick={this.props.enter}
+                                                            >
+                                                                {t('enter')}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                            }
                                             <div className="col-md-1"></div>
                                         </div>
                                     </div>
@@ -74,4 +97,4 @@ class SignInUp extends Component {
     }
 }
 
-export default SignInUp;
+export default Authentication;

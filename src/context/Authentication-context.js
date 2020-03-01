@@ -8,6 +8,7 @@ const authContext = React.createContext({
     upEmailChanged: (event) => { },
     upPasswordChanged: (event) => { },
     upPasswordConfChanged: (event) => { },
+    setAccountInfo: (address, privatekey) => { },
     setFR: () => { },
     setEN: () => { },
     t: () => { }

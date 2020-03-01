@@ -6,12 +6,6 @@ class signup extends Component {
 
     static contextType = languagesContext
 
-    constructor(props) {
-        super(props)
-        this.state = {
-        }
-    }
-
     componentDidMount() {
         this.userNameInput.focus()
     }
@@ -19,7 +13,7 @@ class signup extends Component {
     render() {
         const { t } = this.context
         return (
-            <div className="row col-md-10" style={{ marginBottom: "40px" }}>
+            <div className="row col-md-10" style={{ marginBottom: "20px" }}>
                 <AuthContext.Consumer>
                     {
                         context =>
@@ -73,6 +67,12 @@ class signup extends Component {
                                         />
                                     </div>
                                 </div>
+                                {this.props.loader ?
+                                    <div className="col-md-12 centered">
+                                        <div className="analyse-loader centered" />
+                                    </div>
+                                    : null
+                                }
                             </div>
                     }
                 </AuthContext.Consumer>
