@@ -51,6 +51,7 @@ class App extends Component {
   }
 
   async loadAccountInfo() {
+    // console.log('this.state.web3:', this.state.web3)
     let balance = await this.state.web3.eth.getBalance(this.state.accountAddress)
     balance = this.state.web3.utils.fromWei(balance, "ether")
     this.setState({ balance })
@@ -225,6 +226,7 @@ class App extends Component {
                   privateKey={this.state.privateKey}
 
                   reloadAnalyses={this.loadAnalyses.bind(this)}
+                //  loadAccountInfo={this.loadAccountInfo}
                 />
             }
           </LanguagesContext.Provider >

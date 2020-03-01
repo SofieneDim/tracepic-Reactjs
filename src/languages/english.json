@@ -55,7 +55,7 @@
   "sendEther": "Send Ether ◊",
   "To": "To",
   "Send": "Send",
-  "sendEthComplete": "Transaction successfully sent",
+  "sendEthComplete": "Transaction successfully sent to:",
   "clientBalance": "Your client's balance now is:",
   "welcomeMsg": "Welcome to Tracepic !",
   "enter": "Enter"

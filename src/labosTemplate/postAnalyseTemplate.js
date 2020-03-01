@@ -55,8 +55,15 @@ class postAnalyse extends Component {
                                                 </label>
                                                 <label className="centered">{this.props.analyseValue}</label>
                                             </div>
-                                            : <div className="form-group centered" style={{ marginTop: '20px' }}>
+                                            :
+                                            <div className="form-group centered" style={{ marginTop: '20px' }}>
                                                 <input type="file" onChange={this.props.captureFile} />
+                                                {
+                                                    !this.props.load ?
+                                                        <div className="loader"></div>
+                                                        :
+                                                        null
+                                                }
                                             </div>
                                     }
                                 </div>

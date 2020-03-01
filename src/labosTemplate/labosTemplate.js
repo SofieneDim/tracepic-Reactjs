@@ -31,7 +31,9 @@ class labosTemplate extends Component {
             showSendEtherPlace: false,
             sendEthTo: "",
             sendEthValue: "",
-            sendEthComplete: false
+            sendEthComplete: false,
+            sendEthLoad: false,
+            ipfsUploadLoad: false
         }
     }
 
@@ -156,14 +158,20 @@ class labosTemplate extends Component {
     }
 
     async uploadFileToIPFS(fileBuffer) {
+        this.setState({ ipfsUploadLoad: true })
         await ipfs.add(fileBuffer, (error, ipfsHash) => {
             const fileLink = "https://ipfs.infura.io/ipfs/" + ipfsHash[0].hash
-            this.setState({ analyseValue: fileLink, postSubmitDisable: false })
-            if (error) { return console.error(error) }
+            this.setState({ analyseValue: fileLink, postSubmitDisable: false, ipfsUploadLoad: false })
+            if (error) {
+                this.setState({ ipfsUploadLoad: false })
+                return console.error(error)
+            }
         })
     }
 
-    sendEtherHandler = async () => {
+    sendEtherHandler = async (event) => {
+        event.preventDefault()
+        this.setState({ sendEthLoad: true })
         const _value = Web3.utils.toWei(this.state.sendEthValue, "ether")
         var rawTransaction = {
             from: this.props.accountAddress,
@@ -177,9 +185,11 @@ class labosTemplate extends Component {
                 console.log('receipt:', receipt)
                 let clientBalance = await this.props.web3.eth.getBalance(this.state.sendEthTo)
                 clientBalance = this.props.web3.utils.fromWei(clientBalance, "ether")
-                this.setState({ clientBalance, sendEthComplete: true })
+                this.props.loadAccountInfo()
+                this.setState({ clientBalance, sendEthComplete: true, sendEthLoad: false })
             })
             .catch(err => {
+                this.setState({ sendEthLoad: false })
                 return console.error(err)
             });
 
@@ -248,45 +258,75 @@ class labosTemplate extends Component {
                     </div>
                 </div>
                 <NavigationBar
-                    sendEther={() => { this.setState({ showSendEtherPlace: true }) }}
-                    postAnalyse={() => { this.getAnalyseValue(); this.setState({ analyseValue: '' }) }}
-                    postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null })}
-                    boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null })}
+                    sendEther={() => this.setState({ showSendEtherPlace: true, sendEthComplete: false })}
+                    postAnalyse={() => { this.getAnalyseValue(); this.setState({ analyseValue: '', showSendEtherPlace: false, sendEthComplete: false }) }}
+                    postedAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: true, searchAnalyseResult: null, showSendEtherPlace: false, sendEthComplete: false })}
+                    boughtAnalyses={() => this.setState({ showAnalyse: true, showSelfPosted: false, searchAnalyseResult: null, showSendEtherPlace: false, sendEthComplete: false })}
                     analyseSearchChange={(event) => this.setState({ analyseSearchReference: event.target.value })}
                     searchAnalyse={this.searchAnalyse.bind(this)}
                 />
-
                 {this.state.showSendEtherPlace ?
-                    <div className="row centered" style={{ border: 'solid 3px blue', margin: '30px' }}>
+                    <div id="sendETH" >
                         {
                             !this.state.sendEthComplete ?
-
                                 <form onSubmit={this.sendEtherHandler}>
-                                    <div className="col-md-12" style={{ margin: '20px' }}>
-                                        <label style={{ marginRight: '10px' }}>
-                                            {t('To')} :
-                            </label>
-                                        <input type="text" onChange={(e) => this.setState({ sendEthTo: e.target.value })}></input>
-                                    </div>
-                                    <div className="col-md-12" style={{ margin: '10px' }}>
-                                        <label style={{ marginRight: '10px' }}>
-                                            {t('value')} :
-                            </label>
-                                        <input type="number" onChange={(e) => this.setState({ sendEthValue: e.target.value })}></input>
-                                    </div>
-                                    <div className="col-md-12 centered" style={{ margin: '10px' }}>
-                                        <button className="btn btn-info">
-                                            {t('Send')}
-                                        </button>
+                                    <div className="row">
+                                        <div className="col-md-2"></div>
+                                        <div className="col-md-8">
+                                            <div className="col-md-12 centered" style={{ marginTop: '10px' }}>
+                                                <b><label style={{ marginRight: '10px' }}>
+                                                    {t('To')} :
+                                                </label></b>
+                                            </div>
+                                            <div className="col-md-12" style={{ margin: '0px' }}>
+                                                <input
+                                                    className="form-control"
+                                                    type="text"
+                                                    onChange={(e) => this.setState({ sendEthTo: e.target.value })}
+                                                    required
+                                                ></input>
+                                            </div>
+                                            <div className="col-md-12 centered" style={{ marginTop: '10px' }}>
+                                                <b><label style={{ marginRight: '10px' }}>
+                                                    {t('value')} :
+                                                </label></b>
+                                            </div>
+                                            <div className="col-md-12 centered" style={{ margin: '0px' }}>
+                                                <input type="number" onChange={(e) => this.setState({ sendEthValue: e.target.value })} required></input>
+                                            </div>
+                                            {this.state.sendEthLoad ?
+                                                <div className="col-md-12 centered" style={{ margin: '10px' }}>
+                                                    <div className="loader2"></div>
+                                                </div>
+                                                : null
+                                            }
+                                            <div className="col-md-12 centered" style={{ margin: '10px' }}>
+                                                <button
+                                                    className="btn btn-info"
+                                                    type="submit"
+                                                >
+                                                    {t('Send')}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-2"></div>
                                     </div>
                                 </form>
-
                                 :
-                                <div>
-                                    <h2 style={{ color: 'green', margin: '20px' }}>
-                                        {t('sendEthComplete')}
-                                    </h2>
-                                    <h3>{t('clientBalance') + " " + this.state.clientBalance}</h3>
+                                <div className="row">
+                                    <div className="col-md-12 centered">
+                                        <h2 style={{ color: 'green', margin: '20px' }}>
+                                            {t('sendEthComplete')}
+                                        </h2>
+                                    </div>
+                                    <div className="col-md-12 centered">
+                                        <h4 style={{ color: 'green' }}>
+                                            {this.state.sendEthTo}
+                                        </h4>
+                                    </div>
+                                    <div className="col-md-12 centered">
+                                        <h3>{t('clientBalance') + " " + this.state.clientBalance}</h3>
+                                    </div>
                                 </div>
                         }
                     </div>
@@ -319,6 +359,7 @@ class labosTemplate extends Component {
                                     : null
                             }
                             <PostAnalyse
+                                load={this.state.ipfsUploadLoad}
                                 submit={this.postAnalyse.bind(this)}
                                 cancel={this.cancelPostHandler.bind(this)}
                                 secretCode={this.state.secretCode}
