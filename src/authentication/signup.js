@@ -48,7 +48,7 @@ class signup extends Component {
                                         <label htmlFor="signup-password" className="centered">
                                             <b>{t('password')}</b>
                                         </label>
-                                        <input type="text" className="form-control"
+                                        <input type="password" className="form-control"
                                             id="-signup-password"
                                             placeholder={t('password_placeholder')}
                                             onChange={context.upPasswordChanged}
@@ -60,7 +60,7 @@ class signup extends Component {
                                         <label htmlFor="signup-password-cnf" className="centered">
                                             <b>{t('password-conf')}</b>
                                         </label>
-                                        <input type="text" className="form-control"
+                                        <input type="password" className="form-control"
                                             id="signup-password-cnf"
                                             placeholder={t('password-conf-placeholder')}
                                             onChange={context.upPasswordConfChanged}
