@@ -1,5 +1,5 @@
 #users-jumbotron {
-    background-image: url("../imgs/LogoTransparent@2x.png");
+    background-image: url("../assets/LogoTransparent@2x.png");
     height: 200px;
     background-position: center;
     background-repeat: no-repeat;
@@ -9,7 +9,7 @@
 }
 
 #buy-ether {
-    background-image: url(../imgs/buyEther.png);
+    background-image: url(../assets/buyEther.png);
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: 0px 0px;

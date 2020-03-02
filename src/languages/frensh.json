@@ -58,5 +58,12 @@
   "sendEthComplete": "Transaction envoyée avec succès à:",
   "clientBalance": "Le solde de votre client est maintenant:",
   "welcomeMsg": "Bienvenu chez Tracepic !",
-  "enter": "Enter"
+  "enter": "Enter",
+  "signupAs": "S'inscrire en tant que:",
+  "Labo": "Laboratoire",
+  "Client": "Client",
+  "laboName": "Nom du Labo",
+  "laboName-placeholder": "Entrez le nom de votre labo",
+  "laboAddress": "Adresse Physique",
+  "laboAddress-placeholder": "Entrez l'adresse de votre labo"
 }

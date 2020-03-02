@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import privateKeyRecovery from '../imgs/privateKeyRecovery.png'
+import privateKeyRecovery from '../assets/privateKeyRecovery.png'
 
 import ContractContext from '../context/contract-context'
 

@@ -95,7 +95,7 @@ class App extends Component {
     this.loadAccountInfo()
   }
 
-  async signupHandler(event) {
+  async clientSignupHandler(event) {
     event.preventDefault()
     this.setState({ signupLoad: true })
     if (this.state.signupPassword !== this.state.signupPasswordConf) {
@@ -130,6 +130,23 @@ class App extends Component {
         this.setState({ showSignupResult: false, signupLoad: false })
         return console.error(err)
       });
+  }
+
+  laboSignupHandler = () => {
+    console.log('laboSignupHandler:')
+
+  } 
+
+  signupHandler = (event, _client) => {
+    event.preventDefault()
+    this.state.signinSignup ?
+      this.signinHandler.bind(this)
+      :
+      _client ?
+        this.clientSignupHandler.bind(this)
+        :
+        this.laboSignupHandler()
+    
   }
 
   async keystoreDownload(_filename, _content) {
@@ -167,7 +184,6 @@ class App extends Component {
             }
           } >
             {!this.state.accessApproved ?
-
               <contractContext.Provider value={
                 {
                   contractInstance: this.state.contractInstance,
@@ -182,12 +198,10 @@ class App extends Component {
                     inPrivateKeyChanged: event => this.signinInputChanged("privateKey", event.target.value),
                     inEmailChanged: event => this.signinInputChanged("signinEmail", event.target.value),
                     inPasswordChanged: event => this.signinInputChanged("signinPassword", event.target.value),
-
                     upUsernameChanged: event => this.setState({ signupUsername: event.target.value }),
                     upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
                     upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
                     upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value }),
-
                     setAccountInfo: (address, privatekey) => this.setAccountInfo(address, privatekey)
                   }
                 }>
@@ -199,7 +213,7 @@ class App extends Component {
                     signinSignup={this.state.signinSignup}
                     showSignupResult={this.state.showSignupResult}
                     signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-                    submit={this.state.signinSignup ? this.signinHandler.bind(this) : this.signupHandler.bind(this)}
+                    submit={(e, b) => this.signupHandler(e, b) }
                   />
                 </authContext.Provider >
               </contractContext.Provider >
@@ -218,12 +232,10 @@ class App extends Component {
                   web3={this.state.web3}
                   analyses={this.state.analyses.reverse()}
                   contractInstance={this.state.contractInstance}
-
                   balance={this.state.balance}
                   accountAddress={this.state.accountAddress}
                   accountName={this.state.accountName}
                   privateKey={this.state.privateKey}
-
                   reloadAnalyses={this.loadAnalyses.bind(this)}
                   setAccountInfo={this.setAccountInfo}
                 />

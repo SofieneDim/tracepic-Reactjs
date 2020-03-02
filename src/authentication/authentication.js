@@ -1,17 +1,23 @@
 import React, { Component } from 'react'
 import Helmet from 'react-helmet'
-import './SignInUp.css'
+import './Authentication.css'
 
-import logo from '../imgs/LogoFdBleu@1x.png'
-import signinImage from '../imgs/signin-image.jpg'
+import logo from '../assets/LogoFdBleu@1x.png'
+import signinImage from '../assets/signin-image.jpg'
 import Signin from './signIn'
-import Signup from './signup'
+import ClientSignup from './clientSignup'
+import LaboSignup from './labosSignup'
 
 import languagesContext from '../context/languages-context'
 
 class Authentication extends Component {
 
     static contextType = languagesContext
+
+    state = {
+        decide: false,
+        client: false,
+    }
 
     render() {
         const { t } = this.context
@@ -20,7 +26,6 @@ class Authentication extends Component {
                 <Helmet>
                     <style>{'body { background-color: rgb(49, 54, 203, 0.9); }'}</style>
                 </Helmet>
-
                 <div className="row">
                     <div className="col-md-12">
                         <div id="sign-in-header">
@@ -30,7 +35,6 @@ class Authentication extends Component {
                     <div className="col-md-12">
                         <div className="row" id="sign-inBody" style={{ backgroundColor: 'white' }}>
                             <div className="col-md-1"></div>
-
                             <div className="row col-md-3 centered">
                                 <div className="col-md-12 centered" style={{ marginTop: '20px' }}>
                                     <h2 id='sign-in-up-title'>
@@ -49,27 +53,43 @@ class Authentication extends Component {
                                             {this.props.signinSignup ?
                                                 <Signin />
                                                 :
-                                                !this.props.showSignupResult ?
-                                                    <Signup
-                                                        loader={this.props.loader}
-                                                    />
-                                                    :
-                                                    <div className="row centered" style={{ marginTop: '20px' }}>
-                                                        <h3 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('welcomeMsg')}</h3>
-                                                        <h4 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('address')}</h4>
-                                                        <label className="col-md-12 centered" style={{ marginTop: '20px' }}>{this.props.address}</label>
-                                                        <h4 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('privateKey')}</h4>
-                                                        <label className="col-md-12 centered" style={{ marginTop: '20px' }}>{this.props.privateKey}</label>
-                                                        <div className="col-md-12 centered" style={{ marginTop: '20px' }}>
+                                                !this.state.decided ?
+                                                    <div className="row col-md-12">
+                                                        <div className="col-md-12">
+                                                            <h3 id="signup-suggestion">{t('signupAs')}</h3>
+                                                        </div>
+                                                        <div className="col-md-6 centered">
+                                                            <h4>{t('Labo')}</h4>
+                                                        </div>
+                                                        <div className="col-md-6 centered">
+                                                            <h4>{t('Client')}</h4>
+                                                        </div>
+                                                        <div className="col-md-6 centered">
                                                             <button
-                                                                className="btn btn-success centered"
-                                                                style={{ marginBottom: '20px' }}
-                                                                onClick={this.props.enter}
-                                                            >
-                                                                {t('enter')}
-                                                            </button>
+                                                                type="button"
+                                                                onClick={() => this.setState({ decided: true, client: false })}
+                                                                id="signup-labo"
+                                                            ></button>
+                                                        </div>
+                                                        <div className="col-md-6 centered">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => this.setState({ decided: true, client: true })}
+                                                                id="signup-client"
+                                                            ></button>
                                                         </div>
                                                     </div>
+                                                    :
+                                                    this.state.client ?
+                                                        <ClientSignup
+                                                            loader={this.props.loader}
+                                                            showSignupResult={this.props.showSignupResult}
+                                                            address={this.props.address}
+                                                            privateKey={this.props.privateKey}
+                                                            enter={this.props.enter}
+                                                        />
+                                                        :
+                                                        <LaboSignup />
                                             }
                                             <div className="col-md-1"></div>
                                         </div>
@@ -82,7 +102,7 @@ class Authentication extends Component {
                                         </div>
                                         <div className='col-md-8'>
                                             <button className="btn btn-primary signin_botton" type="submit"
-                                                onClick={this.props.submit}
+                                                onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false) }
                                                 style={{ backgroundColor: '#3333CC', float: 'right' }}
                                             >{t('connect')}</button>
                                         </div>

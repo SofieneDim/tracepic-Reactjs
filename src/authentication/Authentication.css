@@ -27,16 +27,16 @@
   animation: spin 1s linear infinite;
 }
 #private-recover-back {
-  background-image: url(../imgs/back-arrow.png);
+  background-image: url(../assets/back-arrow.png);
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: 0px 0px;
+  vertical-align: middle;
   border: none;
   cursor: pointer;
   height: 40px;
   padding-left: 40px;
   margin-top: 20px;
-  vertical-align: middle;
 }
 
 #privateKeyRecovery {
@@ -50,4 +50,43 @@
   font-family: monospace;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+}
+
+#signup-labo{
+  background-image: url(../assets/laboLogo.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer;
+  height: 200px;
+  width: 170px;
+  background-color: rgb(49, 54, 203);
+  border-radius: 30px;
+  margin-bottom: 40px
+}
+
+#signup-client{
+  background-image: url(../assets/clientLogo.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer;
+  height: 200px;
+  width: 170px;
+  background-color: rgb(49, 54, 203);
+  border-radius: 30px;
+  margin-bottom: 40px
+}
+
+#signup-suggestion {
+  text-align: center;
+  color: blue;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-style: oblique;
+  font-weight: bolder;
 }
