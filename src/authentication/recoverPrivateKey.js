@@ -18,13 +18,13 @@ class RecoverPrivateKey extends Component {
         }
     }
 
-    readKeyStore() {
+    readKeyStore = async () => {
         const keystore = document.getElementById("keystoreFile").files[0]
         const web3 = this.context.web3
         const keystorePassword = this.state.keystorePassword
         if (!this.state.keystorePassword) { return console.log("Please upload your key-store") }
         if (keystore == undefined) { return console.log("Please re-upload your key-store") }
-        this.setState({ loading: true, finish: false })
+        await this.setState({ loading: true, finish: false })
         let fileReader = new FileReader()
         let decryptedAccount = null
         fileReader.onload = (fileLoadedEvent) => {

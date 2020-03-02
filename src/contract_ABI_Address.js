@@ -1,10 +1,5 @@
 export const TRACEPIC_ADDRESS = '0xEC56c7FDc0A413410DF2c6C3C90b91f58c48C034'
 
-export const TRACEPIC_COINBASE = {
-  address: "0x4433673eE7410A1F9f9511371C7484AcB6075937",
-  privateKey: "0x73a6f449a306b8efc7e07f71d47824d7cfef894acb712904a812533c7d871efb"
-}
-
 export const TRACEPIC_ABI = [
   {
     "inputs": [],

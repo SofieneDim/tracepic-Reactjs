@@ -182,10 +182,10 @@ class labosTemplate extends Component {
         await this.props.web3.eth.accounts.signTransaction(rawTransaction, this.props.privateKey)
             .then(signedTx => this.props.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
             .then(async receipt => {
-                console.log('receipt:', receipt)
                 let clientBalance = await this.props.web3.eth.getBalance(this.state.sendEthTo)
-                clientBalance = this.props.web3.utils.fromWei(clientBalance, "ether")
-                this.props.loadAccountInfo()
+                clientBalance = this.props.web3.utils.fromWei(clientBalance, "ether") + " ETH"
+                const labosBalance = await this.props.web3.eth.getBalance(this.props.accountAddress)
+                this.props.setAccountInfo(this.props.web3.utils.fromWei(labosBalance, "ether"))
                 this.setState({ clientBalance, sendEthComplete: true, sendEthLoad: false })
             })
             .catch(err => {

@@ -1,4 +1,4 @@
-import { TRACEPIC_ABI, TRACEPIC_ADDRESS, TRACEPIC_COINBASE } from './contract_ABI_Address'
+import { TRACEPIC_ABI, TRACEPIC_ADDRESS } from './contract_ABI_Address'
 import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
@@ -44,14 +44,13 @@ class App extends Component {
   }
 
   async initContract() {
-    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")//"http://127.0.0.1:7652")
+    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")
     this.setState({ web3 })
     const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
     this.setState({ contractInstance })
   }
 
   async loadAccountInfo() {
-    // console.log('this.state.web3:', this.state.web3)
     let balance = await this.state.web3.eth.getBalance(this.state.accountAddress)
     balance = this.state.web3.utils.fromWei(balance, "ether")
     this.setState({ balance })
@@ -107,7 +106,7 @@ class App extends Component {
     const encoded_tx = this.state.contractInstance.methods.signup(
       account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false).encodeABI();
     var rawTransaction = {
-      "from": TRACEPIC_COINBASE.address,
+      "from": account.address,
       "data": encoded_tx,
       "to": TRACEPIC_ADDRESS,
       "gas": 500000
@@ -115,7 +114,7 @@ class App extends Component {
     const keystore = this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
 
     // sign and send transaction
-    this.state.web3.eth.accounts.signTransaction(rawTransaction, TRACEPIC_COINBASE.privateKey)
+    this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
       .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
 
       .then(receipt => {
@@ -226,7 +225,7 @@ class App extends Component {
                   privateKey={this.state.privateKey}
 
                   reloadAnalyses={this.loadAnalyses.bind(this)}
-                //  loadAccountInfo={this.loadAccountInfo}
+                  setAccountInfo={this.setAccountInfo}
                 />
             }
           </LanguagesContext.Provider >
@@ -263,7 +262,6 @@ class App extends Component {
     try {
       accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(address).call()
-      console.log('accountReceipt:', accountReceipt)
     } catch (error) {
       return console.error(error);
     }
@@ -273,6 +271,10 @@ class App extends Component {
     } else {
       this.usersMode()
     }
+  }
+
+  setAccountInfo = (_balance) => {
+    this.setState({ balance: _balance })
   }
 }
 
