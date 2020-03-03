@@ -30,8 +30,16 @@ class App extends Component {
       laboMode: false,
       metamaskExist: false,
       showSignupResult: false,
+      laboShowSignupResult: false,
       signinSignup: true,
-      signupLoad: false
+      signupLoad: false,
+      laboSignupName: '',
+      laboSignupPhAddress: '',
+      laboSignupEmail: '',
+      laboSignupPassword: '',
+      laboSignupPasswordConf: '',
+      signupAddress: '',
+      signupPrivateKey: '',
     }
   }
 
@@ -66,8 +74,7 @@ class App extends Component {
     this.setState({ analyses })
   }
 
-  async signinHandler(event) {
-    event.preventDefault()
+  async signinHandler() {
     const accountInfo = await this.state.web3.eth.accounts.privateKeyToAccount(this.state.privateKey)
     this.setState({ accountAddress: accountInfo.address, accountPrivateKey: accountInfo.privateKey })
     var accountReceipt = ""
@@ -95,33 +102,31 @@ class App extends Component {
     this.loadAccountInfo()
   }
 
-  async clientSignupHandler(event) {
-    event.preventDefault()
+  async clientSignupHandler() {
     this.setState({ signupLoad: true })
     if (this.state.signupPassword !== this.state.signupPasswordConf) {
       this.setState({ signupLoad: false })
       return console.log("Password doesn't match")
     }
     const account = await this.state.web3.eth.accounts.create()
+    this.setState({ accountAddress: account.address, accountPrivateKey: account.privateKey, accountName: this.state.signupUsername })
     const encoded_tx = this.state.contractInstance.methods.signup(
-      account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword, false).encodeABI();
+      account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword).encodeABI();
     var rawTransaction = {
       "from": account.address,
       "data": encoded_tx,
       "to": TRACEPIC_ADDRESS,
       "gas": 500000
     }
-    const keystore = this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
-
+    const keystore = await this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
     // sign and send transaction
     this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
       .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
-
       .then(receipt => {
         console.log('receipt:', receipt)
         const fileName = this.state.signupUsername + " " + account.address
         this.keystoreDownload(fileName, JSON.stringify(keystore))
-        this.setState({ accountAddress: account.address, accountName: this.state.signupUsername, privateKey: account.privateKey })
+        this.setState({ accountName: this.state.signupUsername })
         console.log('this.state.accountAddress:', this.state.accountAddress)
         console.log('this.state.privateKey:', this.state.privateKey)
         this.setState({ showSignupResult: true, signupLoad: false })
@@ -132,21 +137,48 @@ class App extends Component {
       });
   }
 
-  laboSignupHandler = () => {
-    console.log('laboSignupHandler:')
-
-  } 
+  laboSignupHandler = async () => {
+    console.log('start:')
+    this.setState({ signupLoad: true })
+    if (this.state.laboSignupPassword !== this.state.laboSignupPasswordConf) {
+      this.setState({ signupLoad: false })
+      return console.log("Password doesn't match")
+    }
+    const account = await this.state.web3.eth.accounts.create()
+    this.setState({ signupAddress: account.address, signupPrivateKey: account.privateKey })
+    const encoded_tx = this.state.contractInstance.methods.signupAsLabo(
+      account.address, this.state.laboSignupName, this.state.laboSignupPhAddress, this.state.laboSignupEmail, this.state.laboSignupPassword).encodeABI();
+    var rawTransaction = {
+      "from": account.address,
+      "data": encoded_tx,
+      "to": TRACEPIC_ADDRESS,
+      "gas": 500000
+    }
+    const keystore = await this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.laboSignupPassword)
+    // sign and send transaction
+    this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
+      .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+      .then(receipt => {
+        console.log('receipt:', receipt)
+        this.setState({ laboShowSignupResult: true, signupLoad: false })
+        const fileName = this.state.laboSignupName + " " + account.address
+        this.keystoreDownload(fileName, JSON.stringify(keystore))
+      })
+      .catch(err => {
+        this.setState({ showSignupResult: false, signupLoad: false })
+        return console.error(err)
+      });
+  }
 
   signupHandler = (event, _client) => {
     event.preventDefault()
     this.state.signinSignup ?
-      this.signinHandler.bind(this)
+      this.signinHandler()
       :
       _client ?
-        this.clientSignupHandler.bind(this)
+        this.clientSignupHandler()
         :
         this.laboSignupHandler()
-    
   }
 
   async keystoreDownload(_filename, _content) {
@@ -202,18 +234,26 @@ class App extends Component {
                     upEmailChanged: event => this.setState({ signupEmail: event.target.value }),
                     upPasswordChanged: event => this.setState({ signupPassword: event.target.value }),
                     upPasswordConfChanged: event => this.setState({ signupPasswordConf: event.target.value }),
+                    laboUpNameChanged: (e) => this.setState({ laboSignupName: e.target.value }),
+                    laboUpAddressChanged: (e) => this.setState({ laboSignupPhAddress: e.target.value }),
+                    laboUpEmailChanged: (e) => this.setState({ laboSignupEmail: e.target.value }),
+                    laboUpPasswordChanged: (e) => this.setState({ laboSignupPassword: e.target.value }),
+                    laboUpPasswordConfChanged: (e) => this.setState({ laboSignupPasswordConf: e.target.value }),
                     setAccountInfo: (address, privatekey) => this.setAccountInfo(address, privatekey)
                   }
                 }>
                   <Authentication
                     enter={this.authenticated}
                     loader={this.state.signupLoad}
-                    privateKey={this.state.privateKey}
-                    address={this.state.accountAddress}
+                    signinAddress={this.state.accountAddress}
+                    signinPrivateKey={this.state.accountPrivateKey}
+                    signupAddress={this.state.signupAddress}
+                    signupPrivateKey={this.state.signupPrivateKey}
                     signinSignup={this.state.signinSignup}
                     showSignupResult={this.state.showSignupResult}
+                    laboShowSignupResult={this.state.laboShowSignupResult}
                     signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-                    submit={(e, b) => this.signupHandler(e, b) }
+                    submit={(e, b) => this.signupHandler(e, b)}
                   />
                 </authContext.Provider >
               </contractContext.Provider >

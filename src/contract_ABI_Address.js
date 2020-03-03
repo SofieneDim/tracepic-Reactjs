@@ -1,4 +1,4 @@
-export const TRACEPIC_ADDRESS = '0xEC56c7FDc0A413410DF2c6C3C90b91f58c48C034'
+export const TRACEPIC_ADDRESS = '0xBc4f34457F6f8773b86b3Eb95136cc5E73566B88'
 
 export const TRACEPIC_ABI = [
   {
@@ -45,7 +45,28 @@ export const TRACEPIC_ABI = [
       },
       {
         "internalType": "bool",
-        "name": "admin",
+        "name": "labo",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "adminAccounts",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
         "type": "bool"
       }
     ],
@@ -169,6 +190,57 @@ export const TRACEPIC_ABI = [
         "internalType": "uint256",
         "name": "secret",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "signupRequests",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "userName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "phAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "password",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -306,6 +378,27 @@ export const TRACEPIC_ABI = [
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
+      }
+    ],
+    "name": "getAnalyseByReference",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -327,14 +420,59 @@ export const TRACEPIC_ABI = [
         "internalType": "string",
         "name": "_password",
         "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "_admin",
-        "type": "bool"
       }
     ],
     "name": "signup",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "laboName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "phAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_email",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      }
+    ],
+    "name": "signupAsLabo",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "approveRequest",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -426,27 +564,6 @@ export const TRACEPIC_ABI = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_reference",
-        "type": "string"
-      }
-    ],
-    "name": "getAnalyseByReference",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
       }
     ],
     "payable": false,

@@ -84,12 +84,17 @@ class Authentication extends Component {
                                                         <ClientSignup
                                                             loader={this.props.loader}
                                                             showSignupResult={this.props.showSignupResult}
-                                                            address={this.props.address}
-                                                            privateKey={this.props.privateKey}
+                                                            address={this.props.signinAddress}
+                                                            privateKey={this.props.signinPrivateKey}
                                                             enter={this.props.enter}
                                                         />
                                                         :
-                                                        <LaboSignup />
+                                                        <LaboSignup
+                                                            address={this.props.signupAddress}
+                                                            pivateKey={this.props.signupPrivateKey}
+                                                            loader={this.props.loader}
+                                                            laboShowSignupResult={this.props.laboShowSignupResult}
+                                                        />
                                             }
                                             <div className="col-md-1"></div>
                                         </div>
@@ -102,7 +107,7 @@ class Authentication extends Component {
                                         </div>
                                         <div className='col-md-8'>
                                             <button className="btn btn-primary signin_botton" type="submit"
-                                                onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false) }
+                                                onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false)}
                                                 style={{ backgroundColor: '#3333CC', float: 'right' }}
                                             >{t('connect')}</button>
                                         </div>

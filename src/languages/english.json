@@ -65,5 +65,7 @@
   "laboName": "Labo Name",
   "laboName-placeholder": "Enter your labo's name",
   "laboAddress": "Physical Address",
-  "laboAddress-placeholder": "Enter your labo's address"
+  "laboAddress-placeholder": "Enter your labo's address",
+  "laboSignupMsg1": "We successfully received your demand, ",
+  "laboSignupMsg2": "and we will approve it as soon as possible"
 }
