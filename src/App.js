@@ -12,6 +12,7 @@ import contractContext from './context/contract-context'
 import authContext from './context/Authentication-context'
 import LanguagesContext from './context/languages-context'
 import { withNamespaces } from 'react-i18next'
+import AdminTemplate from './adminTemplate/adminTemplate'
 
 class App extends Component {
 
@@ -22,8 +23,9 @@ class App extends Component {
       balance: null,
       contractInstance: null,
       analyses: [],
+      adminMode: false,
       accountAddress: '',
-      privateKey: '',
+      privateKey: '0x73a6f449a306b8efc7e07f71d47824d7cfef894acb712904a812533c7d871efb',
       signinEmail: '',
       signinPassword: '',
       accessApproved: false,
@@ -78,6 +80,8 @@ class App extends Component {
     const accountInfo = await this.state.web3.eth.accounts.privateKeyToAccount(this.state.privateKey)
     this.setState({ accountAddress: accountInfo.address, accountPrivateKey: accountInfo.privateKey })
     var accountReceipt = ""
+    const _isAdmin = await this.state.contractInstance.methods.adminAccounts(accountInfo.address).call()
+    if (_isAdmin) { return this.setState({ adminMode: true, accessApproved: true }) }
     try {
       accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.accountAddress).call()
@@ -257,34 +261,50 @@ class App extends Component {
                   />
                 </authContext.Provider >
               </contractContext.Provider >
-              : !this.labosMode ?
-                <UsersTemplate
+              :
+              this.state.adminMode ?
+                <AdminTemplate
                   web3={this.state.web3}
                   contractInstance={this.state.contractInstance}
-                  analyses={this.state.analyses.reverse()}
-                  balance={this.state.balance}
-                  accountAddress={this.state.accountAddress}
-                  accountPrivateKey={this.state.accountPrivateKey}
-                  accountName={this.state.accountName}
-                  reloadAccountInfo={this.loadAccountInfo.bind(this)}
                 />
-                : <LabosTemplate
-                  web3={this.state.web3}
-                  analyses={this.state.analyses.reverse()}
-                  contractInstance={this.state.contractInstance}
-                  balance={this.state.balance}
-                  accountAddress={this.state.accountAddress}
-                  accountName={this.state.accountName}
-                  privateKey={this.state.privateKey}
-                  reloadAnalyses={this.loadAnalyses.bind(this)}
-                  setAccountInfo={this.setAccountInfo}
-                />
+                :
+                this.labosMode ?
+                  <LabosTemplate
+                    web3={this.state.web3}
+                    analyses={this.state.analyses.reverse()}
+                    contractInstance={this.state.contractInstance}
+                    balance={this.state.balance}
+                    accountAddress={this.state.accountAddress}
+                    accountName={this.state.accountName}
+                    privateKey={this.state.privateKey}
+                    reloadAnalyses={this.loadAnalyses.bind(this)}
+                    setAccountInfo={this.setAccountInfo}
+                  />
+                  :
+                  <UsersTemplate
+                    web3={this.state.web3}
+                    contractInstance={this.state.contractInstance}
+                    analyses={this.state.analyses.reverse()}
+                    balance={this.state.balance}
+                    accountAddress={this.state.accountAddress}
+                    accountPrivateKey={this.state.accountPrivateKey}
+                    accountName={this.state.accountName}
+                    reloadAccountInfo={this.loadAccountInfo.bind(this)}
+                  />
             }
           </LanguagesContext.Provider >
         </div >
       </div>
     )
   }
+
+  // render() {
+  //   console.log('render:', this.state.contractInstance)
+  //   return <AdminTemplate
+  //     web3={this.state.web3}
+  //     contractInstance={this.state.contractInstance}
+  //   />
+  // }
 
   labosMode() {
     this.labosMode = true

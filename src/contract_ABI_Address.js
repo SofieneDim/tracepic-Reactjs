@@ -1,4 +1,4 @@
-export const TRACEPIC_ADDRESS = '0xBc4f34457F6f8773b86b3Eb95136cc5E73566B88'
+export const TRACEPIC_ADDRESS = '0x684fD37cDaB6a99C021Fc2B5C838765A08bc8B06'
 
 export const TRACEPIC_ABI = [
   {
@@ -189,6 +189,21 @@ export const TRACEPIC_ABI = [
       {
         "internalType": "uint256",
         "name": "secret",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "signupRequestCounter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -476,6 +491,21 @@ export const TRACEPIC_ABI = [
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getSignupRequestCounter",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {

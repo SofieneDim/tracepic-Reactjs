@@ -1,0 +1,9 @@
+#admin-jumbotron {
+  background-image: url("../assets/LogoTransparentAdmin.png");
+  height: 200px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: black;
+  margin-top: 5%;
+}
