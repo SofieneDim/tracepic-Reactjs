@@ -129,12 +129,10 @@ class labosTemplate extends Component {
 
     async searchAnalyse(event) {
         event.preventDefault()
-
         const analyseId = await this.props.contractInstance.methods
             .getAnalyseByReference(this.state.analyseSearchReference).call()
         if (analyseId == 0) { return console.log('analyse not found!') }
         const analyse = await this.props.contractInstance.methods.analyses(analyseId).call()
-
         const searchAnalyseResult = (
             <div>
                 <AnalysesTemplate
@@ -200,7 +198,7 @@ class labosTemplate extends Component {
         const analyses = (
             <div id="analysis_placeholder">
                 {
-                    this.props.analyses.map((analyse) => {
+                    this.props.analyses.map(analyse => {
                         return this.state.showSelfPosted ?
                             <AnalysesTemplate
                                 analyse={analyse}

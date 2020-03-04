@@ -8,22 +8,18 @@ const labosNavigationBar = (props) => {
       {context =>
         <div className="col-md-12">
           <div>
-            <div>
-              <div>
-                <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.postAnalyse}>
-                  {context.t('postAnalysis')}
-                </button>
-                <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.sendEther}>
-                  {context.t('sendEther')}
-                </button>
-                <button className="btn labos-btn-custom btn-lg" onClick={props.postedAnalyses}>
-                  {context.t('myPostedAnalysis')}
-                </button>
-                <button className="btn labos-btn-custom btn-lg" style={{ backgroundColor: 'grey' }} onClick={props.boughtAnalyses}>
-                  {context.t('boughtAnalysis')}
-                </button>
-              </div>
-            </div>
+            <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.postAnalyse}>
+              {context.t('postAnalysis')}
+            </button>
+            <button className="btn labos-btn-custom btn-lg" style={{ float: 'right' }} onClick={props.sendEther}>
+              {context.t('sendEther')}
+            </button>
+            <button className="btn labos-btn-custom btn-lg" onClick={props.postedAnalyses}>
+              {context.t('myPostedAnalysis')}
+            </button>
+            <button className="btn labos-btn-custom btn-lg" style={{ backgroundColor: 'grey' }} onClick={props.boughtAnalyses}>
+              {context.t('boughtAnalysis')}
+            </button>
           </div>
           <div className="centered">
             <form onSubmit={props.searchAnalyse}>

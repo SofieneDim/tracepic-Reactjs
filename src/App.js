@@ -142,7 +142,6 @@ class App extends Component {
   }
 
   laboSignupHandler = async () => {
-    console.log('start:')
     this.setState({ signupLoad: true })
     if (this.state.laboSignupPassword !== this.state.laboSignupPasswordConf) {
       this.setState({ signupLoad: false })
@@ -150,8 +149,10 @@ class App extends Component {
     }
     const account = await this.state.web3.eth.accounts.create()
     this.setState({ signupAddress: account.address, signupPrivateKey: account.privateKey })
+    const date = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear() +
+      " " + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
     const encoded_tx = this.state.contractInstance.methods.signupAsLabo(
-      account.address, this.state.laboSignupName, this.state.laboSignupPhAddress, this.state.laboSignupEmail, this.state.laboSignupPassword).encodeABI();
+      account.address, date, this.state.laboSignupName, this.state.laboSignupPhAddress, this.state.laboSignupEmail, this.state.laboSignupPassword).encodeABI();
     var rawTransaction = {
       "from": account.address,
       "data": encoded_tx,
@@ -266,6 +267,8 @@ class App extends Component {
                 <AdminTemplate
                   web3={this.state.web3}
                   contractInstance={this.state.contractInstance}
+                  accountAddress={this.state.accountAddress}
+                  privateKey={this.state.privateKey}
                 />
                 :
                 this.labosMode ?
@@ -292,19 +295,15 @@ class App extends Component {
                     reloadAccountInfo={this.loadAccountInfo.bind(this)}
                   />
             }
-          </LanguagesContext.Provider >
+            {/* <AdminTemplate
+              web3={this.state.web3}
+              contractInstance={this.state.contractInstance}
+            />*/}
+          </LanguagesContext.Provider > 
         </div >
       </div>
     )
   }
-
-  // render() {
-  //   console.log('render:', this.state.contractInstance)
-  //   return <AdminTemplate
-  //     web3={this.state.web3}
-  //     contractInstance={this.state.contractInstance}
-  //   />
-  // }
 
   labosMode() {
     this.labosMode = true

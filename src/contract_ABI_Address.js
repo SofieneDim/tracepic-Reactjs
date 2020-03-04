@@ -1,4 +1,4 @@
-export const TRACEPIC_ADDRESS = '0x684fD37cDaB6a99C021Fc2B5C838765A08bc8B06'
+export const TRACEPIC_ADDRESS = '0xA150Cb469Bc14aD51f96ECb5e579eA39a6fB0291'
 
 export const TRACEPIC_ABI = [
   {
@@ -223,18 +223,23 @@ export const TRACEPIC_ABI = [
     "name": "signupRequests",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "owner",
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
-        "name": "userName",
+        "name": "date",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
         "type": "string"
       },
       {
@@ -251,6 +256,11 @@ export const TRACEPIC_ABI = [
         "internalType": "string",
         "name": "password",
         "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "pending",
+        "type": "bool"
       },
       {
         "internalType": "bool",
@@ -453,6 +463,11 @@ export const TRACEPIC_ABI = [
       },
       {
         "internalType": "string",
+        "name": "requestDate",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "laboName",
         "type": "string"
       },
@@ -494,9 +509,39 @@ export const TRACEPIC_ABI = [
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "refuseRequest",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "getSignupRequestCounter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getSignupRequestPending",
     "outputs": [
       {
         "internalType": "uint256[]",

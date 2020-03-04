@@ -67,5 +67,17 @@
   "laboAddress": "Adresse Physique",
   "laboAddress-placeholder": "Entrez l'adresse de votre labo",
   "laboSignupMsg1": "Nous avons bien reçu votre demande, ",
-  "laboSignupMsg2": "et nous l'approuverons dès que possible"
+  "laboSignupMsg2": "et nous l'approuverons dès que possible",
+  "requestNumber": "Numéro de demande",
+  "approve": "Approuver",
+  "refuse": "Refuser",
+  "demandeDate": "Date de demande",
+  "approved": "Approuvée",
+  "pending": "En attente",
+  "refused": "Refusé",
+  "approvedRequests": "Demande Approuvées",
+  "allRequests": "Toutes les Demandes",
+  "pendingRequests": "Demandes en Attente",
+  "refusedRequests": "Demande Refusées",
+  "searchRequest_placeholder": "Rechercher par id..."
 }

@@ -67,5 +67,17 @@
   "laboAddress": "Physical Address",
   "laboAddress-placeholder": "Enter your labo's address",
   "laboSignupMsg1": "We successfully received your demand, ",
-  "laboSignupMsg2": "and we will approve it as soon as possible"
+  "laboSignupMsg2": "and we will approve it as soon as possible",
+  "requestNumber": "Request Number",
+  "approve": "Approve",
+  "refuse": "Refuse",
+  "demandeDate": "Request Date",
+  "approved": "Approved",
+  "pending": "Pending",
+  "refused": "Refused",
+  "approvedRequests": "Approved Requests",
+  "allRequests": "All Requests",
+  "pendingRequests": "Pending Requests",
+  "refusedRequests": "Refused Requests",
+  "searchRequest_placeholder": "Search by request's id..."
 }
