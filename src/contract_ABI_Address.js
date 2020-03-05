@@ -1,4 +1,4 @@
-export const TRACEPIC_ADDRESS = '0xA150Cb469Bc14aD51f96ECb5e579eA39a6fB0291'
+export const TRACEPIC_ADDRESS = '0xE1654589fC1B06a1e2d45f3F32A7639d0c5B58AF'
 
 export const TRACEPIC_ABI = [
   {
@@ -198,13 +198,59 @@ export const TRACEPIC_ABI = [
   },
   {
     "constant": true,
-    "inputs": [],
-    "name": "signupRequestCounter",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "signupRequestsAddress",
     "outputs": [
       {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "",
+        "name": "id",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "date",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "phAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "password",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "pending",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -220,7 +266,7 @@ export const TRACEPIC_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "signupRequests",
+    "name": "signupRequestsId",
     "outputs": [
       {
         "internalType": "address",
@@ -521,6 +567,27 @@ export const TRACEPIC_ABI = [
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "checkRequest",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {

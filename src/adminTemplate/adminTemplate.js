@@ -24,7 +24,7 @@ class AdminTemplate extends Component {
         }
         const allRequests = []
         for (let i = 1; i <= allRequestsIds; i++) {
-            let request = await this.props.contractInstance.methods.signupRequests(i).call()
+            let request = await this.props.contractInstance.methods.signupRequestsId(i).call()
             allRequests.push(request)
         }
         await this.setState({ allRequests })
@@ -107,6 +107,40 @@ class AdminTemplate extends Component {
         this.showRefusedRequest()
     }
 
+    showPendingRequest = () => {
+        const allRequestsLeft = []
+        const allRequestsRight = []
+        let sort = false
+        this.state.allRequests.map(request => {
+            if (request.pending) {
+                if (sort) {
+                    allRequestsLeft.push(
+                        <RequestTemplate
+                            key={request.id}
+                            request={request}
+                            refuse={() => this.refuseRequest(request.id)}
+                            approve={this.approveRequest.bind(this, request.id)}
+                            loading={this.state.loading}
+                        />
+                    )
+                    sort = !sort
+                } else {
+                    allRequestsRight.push(
+                        <RequestTemplate
+                            key={request.id}
+                            request={request}
+                            refuse={() => this.refuseRequest(request.id)}
+                            approve={this.approveRequest.bind(this, request.id)}
+                            loading={this.state.loading}
+                        />
+                    )
+                    sort = !sort
+                }
+            }
+            this.setState({ allRequestsLeft, allRequestsRight })
+        })
+    }
+
     showApprovedRequest = () => {
         const allRequestsLeft = []
         const allRequestsRight = []
@@ -175,40 +209,8 @@ class AdminTemplate extends Component {
         })
     }
 
-    showPendingRequest = () => {
-        const allRequestsLeft = []
-        const allRequestsRight = []
-        let sort = false
-        this.state.allRequests.map((request, i) => {
-            if (request.pending) {
-                if (sort) {
-                    allRequestsLeft.push(
-                        <RequestTemplate
-                            key={request.id}
-                            request={request}
-                            refuse={() => this.refuseRequest(request.id)}
-                            approve={this.approveRequest.bind(this, request.id)}
-                            loading={this.state.loading}
-                        />
-                    )
-                } else {
-                    allRequestsRight.push(
-                        <RequestTemplate
-                            key={request.id}
-                            request={request}
-                            refuse={() => this.refuseRequest(request.id)}
-                            approve={this.approveRequest.bind(this, request.id)}
-                            loading={this.state.loading}
-                        />
-                    )
-                }
-            }
-            this.setState({ allRequestsLeft, allRequestsRight })
-        })
-    }
-
     searchRequest = async () => {
-        let request = await this.props.contractInstance.methods.signupRequests(this.state.requestSearch).call()
+        let request = await this.props.contractInstance.methods.signupRequestsId(this.state.requestSearch).call()
         request.id == 0 ? console.log('request not found') :
             console.log('request:', request)
     }

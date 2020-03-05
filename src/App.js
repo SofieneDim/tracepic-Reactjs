@@ -25,7 +25,7 @@ class App extends Component {
       analyses: [],
       adminMode: false,
       accountAddress: '',
-      privateKey: '0x73a6f449a306b8efc7e07f71d47824d7cfef894acb712904a812533c7d871efb',
+      privateKey: '',//'0x73a6f449a306b8efc7e07f71d47824d7cfef894acb712904a812533c7d871efb',
       signinEmail: '',
       signinPassword: '',
       accessApproved: false,
@@ -88,15 +88,8 @@ class App extends Component {
     } catch (error) {
       return console.error(error);
     }
-    if (accountReceipt[1] == 0x0) {
-      return console.log("account doesn't exist")
-    }
-    if (this.state.signinEmail !== accountReceipt[3]) {
-      return console.log("wrong email address")
-    }
-    if (this.state.signinPassword !== accountReceipt[4]) {
-      return console.log("wrong password")
-    }
+    const authorized = await this.checkAccount(accountReceipt)
+    if (!authorized) { return console.log('Not authorized') }
     this.setState({ accountName: accountReceipt[2] })
     if (accountReceipt[5]) {
       this.labosMode()
@@ -104,6 +97,39 @@ class App extends Component {
       this.usersMode()
     }
     this.loadAccountInfo()
+  }
+
+  checkAccount = async (accountReceipt) => {
+    const accountState = await this.state.contractInstance.methods.checkRequest(this.state.accountAddress).call()
+    switch (accountState) {
+      case 'null':
+        console.log("account doesn't exist")
+        return false
+      case 'pending':
+        console.log('Request pending')
+        return false
+      case 'approved':
+        console.log('Request approved')
+        return true
+      case 'refused':
+        console.log('Request refused')
+        return false
+    }
+    if (accountReceipt[1] == 0x0) {
+      return console.log("account doesn't exist")
+    }
+    if (this.state.signinEmail !== accountReceipt[3]) {
+      console.log("wrong email address")
+      return false
+    }
+    if (this.state.signinPassword !== accountReceipt[4]) {
+      console.log("wrong password")
+      return false
+    }
+    if (this.state.signinPassword !== accountReceipt[4]) {
+      console.log("wrong password")
+      return false
+    }
   }
 
   async clientSignupHandler() {
@@ -299,7 +325,7 @@ class App extends Component {
               web3={this.state.web3}
               contractInstance={this.state.contractInstance}
             />*/}
-          </LanguagesContext.Provider > 
+          </LanguagesContext.Provider >
         </div >
       </div>
     )
