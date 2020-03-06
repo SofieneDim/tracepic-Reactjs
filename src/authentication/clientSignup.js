@@ -40,7 +40,7 @@ class ClientSignup extends Component {
                                             <input type="text" className="form-control"
                                                 id="signup-email"
                                                 placeholder={t('emailAddress_placeholder')}
-                                                onChange={context.upEmailChanged}
+                                                onChange={(e) => context.upEmailChanged(e) & this.props.clientUpEmailChanged(e)}
                                             />
                                         </div>
                                     </div>

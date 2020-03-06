@@ -8,6 +8,8 @@ import Signin from './signIn'
 import ClientSignup from './clientSignup'
 import LaboSignup from './labosSignup'
 
+import { API_URL } from '../config'
+
 import languagesContext from '../context/languages-context'
 
 class Authentication extends Component {
@@ -17,6 +19,55 @@ class Authentication extends Component {
     state = {
         decide: false,
         client: false,
+        loading: true,
+        sendingEmail: false,
+        clientEmail: '',
+        laboEmail: '',
+    }
+
+    clientSignup = () => {
+        this.wakeServer()
+        this.setState({ decided: true, client: false })
+    }
+
+    laboSignup = () => {
+        this.wakeServer()
+        this.setState({ decided: true, client: true })
+    }
+
+    wakeServer = () => {
+        fetch(`${API_URL}/wake-up`)
+            .then(res => res.json())
+            .then(() => {
+                this.setState({ loading: false })
+                console.log('connected')
+            })
+            .catch(err => console.log(err))
+    }
+
+    onSubmit = event => {
+        event.preventDefault()
+        let email = ''
+        const client = this.state.client
+        this.state.client ?
+            email = this.state.clientEmail
+            :
+            email = this.state.laboEmail
+        this.setState({ sendingEmail: true })
+        fetch(`${API_URL}/email`, {
+            method: 'pOSt',
+            headers: {
+                aCcePt: 'aPpliCaTIon/JsOn',
+                'cOntENt-type': 'applicAtion/JSoN'
+            },
+            body: JSON.stringify({ email: email, client: client })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log('data:', data)
+                this.setState({ sendingEmail: false })
+            })
+            .catch(err => console.log(err))
     }
 
     render() {
@@ -53,7 +104,25 @@ class Authentication extends Component {
                                             {this.props.signinSignup ?
                                                 <Signin />
                                                 :
-                                                !this.state.decided ?
+                                                this.state.decided ?
+                                                    this.state.client ?
+                                                        <ClientSignup
+                                                            loader={this.props.loader}
+                                                            showSignupResult={this.props.showSignupResult}
+                                                            address={this.props.signinAddress}
+                                                            privateKey={this.props.signinPrivateKey}
+                                                            enter={this.props.enter}
+                                                            clientUpEmailChanged={(e) => this.setState({ clientEmail: e.target.value })}
+                                                        />
+                                                        :
+                                                        <LaboSignup
+                                                            address={this.props.signupAddress}
+                                                            pivateKey={this.props.signupPrivateKey}
+                                                            loader={this.props.loader}
+                                                            laboShowSignupResult={this.props.laboShowSignupResult}
+                                                            laboUpEmailChanged={(e) => this.setState({ laboEmail: e.target.value })}
+                                                        />
+                                                    :
                                                     <div className="row col-md-12">
                                                         <div className="col-md-12">
                                                             <h3 id="signup-suggestion">{t('signupAs')}</h3>
@@ -67,34 +136,18 @@ class Authentication extends Component {
                                                         <div className="col-md-6 centered">
                                                             <button
                                                                 type="button"
-                                                                onClick={() => this.setState({ decided: true, client: false })}
+                                                                onClick={() => this.clientSignup()}
                                                                 id="signup-labo"
                                                             ></button>
                                                         </div>
                                                         <div className="col-md-6 centered">
                                                             <button
                                                                 type="button"
-                                                                onClick={() => this.setState({ decided: true, client: true })}
+                                                                onClick={() => this.laboSignup()}
                                                                 id="signup-client"
                                                             ></button>
                                                         </div>
                                                     </div>
-                                                    :
-                                                    this.state.client ?
-                                                        <ClientSignup
-                                                            loader={this.props.loader}
-                                                            showSignupResult={this.props.showSignupResult}
-                                                            address={this.props.signinAddress}
-                                                            privateKey={this.props.signinPrivateKey}
-                                                            enter={this.props.enter}
-                                                        />
-                                                        :
-                                                        <LaboSignup
-                                                            address={this.props.signupAddress}
-                                                            pivateKey={this.props.signupPrivateKey}
-                                                            loader={this.props.loader}
-                                                            laboShowSignupResult={this.props.laboShowSignupResult}
-                                                        />
                                             }
                                             <div className="col-md-1"></div>
                                         </div>
@@ -107,7 +160,8 @@ class Authentication extends Component {
                                         </div>
                                         <div className='col-md-8'>
                                             <button className="btn btn-primary signin_botton" type="submit"
-                                                onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false)}
+                                                onClick={this.onSubmit}
+                                                // onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false)}
                                                 style={{ backgroundColor: '#3333CC', float: 'right' }}
                                             >{t('connect')}</button>
                                         </div>

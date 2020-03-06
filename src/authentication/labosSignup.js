@@ -33,7 +33,7 @@ class LaboSignup extends Component {
                                                     id="signup-laboNme"
                                                     placeholder={t('laboName-placeholder')}
                                                     ref={_inputRef => this.laboNameInput = _inputRef}
-                                                    onChange={context.laboUpNameChanged}
+                                                    onChange={() => context.laboUpNameChanged & this.props.laboUpNameChanged}
                                                 />
                                             </div>
                                         </div>,
@@ -57,7 +57,7 @@ class LaboSignup extends Component {
                                                 <input type="text" className="form-control"
                                                     id="signup-email"
                                                     placeholder={t('emailAddress_placeholder')}
-                                                    onChange={context.laboUpEmailChanged}
+                                                    onChange={(e) => context.laboUpEmailChanged(e) & this.props.laboUpEmailChanged(e)}
                                                 />
                                             </div>
                                         </div>,

@@ -7,12 +7,12 @@ import i18n from "i18next"
 import LabosTemplate from './labosTemplate/labosTemplate'
 import UsersTemplate from './usersTemplate/usersTemplate'
 import Authentication from './authentication/authentication'
+import AdminTemplate from './adminTemplate/adminTemplate'
 
 import contractContext from './context/contract-context'
 import authContext from './context/Authentication-context'
 import LanguagesContext from './context/languages-context'
 import { withNamespaces } from 'react-i18next'
-import AdminTemplate from './adminTemplate/adminTemplate'
 
 class App extends Component {
 
@@ -284,7 +284,6 @@ class App extends Component {
                     showSignupResult={this.state.showSignupResult}
                     laboShowSignupResult={this.state.laboShowSignupResult}
                     signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
-                    submit={(e, b) => this.signupHandler(e, b)}
                   />
                 </authContext.Provider >
               </contractContext.Provider >

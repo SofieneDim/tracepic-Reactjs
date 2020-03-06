@@ -1,19 +1,19 @@
 #sign-in-header {
-    background-color: rgb(49, 54, 203);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15%;
-    margin-left: -15px;
-    margin-right: -15px;
+  background-color: rgb(49, 54, 203);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15%;
+  margin-left: -15px;
+  margin-right: -15px;
 }
 
 #sign-in-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0px;
-    background-color: cornsilk;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  background-color: cornsilk;
 }
 
 .analyse-loader {
@@ -52,7 +52,7 @@
   font-weight: bold;
 }
 
-#signup-labo{
+#signup-labo {
   background-image: url(../assets/laboLogo.png);
   background-color: transparent;
   background-repeat: no-repeat;
@@ -64,10 +64,10 @@
   width: 170px;
   background-color: rgb(49, 54, 203);
   border-radius: 30px;
-  margin-bottom: 40px
+  margin-bottom: 40px;
 }
 
-#signup-client{
+#signup-client {
   background-image: url(../assets/clientLogo.png);
   background-color: transparent;
   background-repeat: no-repeat;
@@ -79,7 +79,7 @@
   width: 170px;
   background-color: rgb(49, 54, 203);
   border-radius: 30px;
-  margin-bottom: 40px
+  margin-bottom: 40px;
 }
 
 #signup-suggestion {
