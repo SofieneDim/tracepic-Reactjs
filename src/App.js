@@ -132,96 +132,6 @@ class App extends Component {
     }
   }
 
-  async clientSignupHandler() {
-    this.setState({ signupLoad: true })
-    if (this.state.signupPassword !== this.state.signupPasswordConf) {
-      this.setState({ signupLoad: false })
-      return console.log("Password doesn't match")
-    }
-    const account = await this.state.web3.eth.accounts.create()
-    this.setState({ accountAddress: account.address, accountPrivateKey: account.privateKey, accountName: this.state.signupUsername })
-    const encoded_tx = this.state.contractInstance.methods.signup(
-      account.address, this.state.signupUsername, this.state.signupEmail, this.state.signupPassword).encodeABI();
-    var rawTransaction = {
-      "from": account.address,
-      "data": encoded_tx,
-      "to": TRACEPIC_ADDRESS,
-      "gas": 500000
-    }
-    const keystore = await this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.signupPassword)
-    // sign and send transaction
-    this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
-      .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
-      .then(receipt => {
-        console.log('receipt:', receipt)
-        const fileName = this.state.signupUsername + " " + account.address
-        this.keystoreDownload(fileName, JSON.stringify(keystore))
-        this.setState({ accountName: this.state.signupUsername })
-        console.log('this.state.accountAddress:', this.state.accountAddress)
-        console.log('this.state.privateKey:', this.state.privateKey)
-        this.setState({ showSignupResult: true, signupLoad: false })
-      })
-      .catch(err => {
-        this.setState({ showSignupResult: false, signupLoad: false })
-        return console.error(err)
-      });
-  }
-
-  laboSignupHandler = async () => {
-    this.setState({ signupLoad: true })
-    if (this.state.laboSignupPassword !== this.state.laboSignupPasswordConf) {
-      this.setState({ signupLoad: false })
-      return console.log("Password doesn't match")
-    }
-    const account = await this.state.web3.eth.accounts.create()
-    this.setState({ signupAddress: account.address, signupPrivateKey: account.privateKey })
-    const date = new Date().getDate() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getFullYear() +
-      " " + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
-    const encoded_tx = this.state.contractInstance.methods.signupAsLabo(
-      account.address, date, this.state.laboSignupName, this.state.laboSignupPhAddress, this.state.laboSignupEmail, this.state.laboSignupPassword).encodeABI();
-    var rawTransaction = {
-      "from": account.address,
-      "data": encoded_tx,
-      "to": TRACEPIC_ADDRESS,
-      "gas": 500000
-    }
-    const keystore = await this.state.web3.eth.accounts.encrypt(account.privateKey, this.state.laboSignupPassword)
-    // sign and send transaction
-    this.state.web3.eth.accounts.signTransaction(rawTransaction, account.privateKey)
-      .then(signedTx => this.state.web3.eth.sendSignedTransaction(signedTx.rawTransaction))
-      .then(receipt => {
-        console.log('receipt:', receipt)
-        this.setState({ laboShowSignupResult: true, signupLoad: false })
-        const fileName = this.state.laboSignupName + " " + account.address
-        this.keystoreDownload(fileName, JSON.stringify(keystore))
-      })
-      .catch(err => {
-        this.setState({ showSignupResult: false, signupLoad: false })
-        return console.error(err)
-      });
-  }
-
-  signupHandler = (event, _client) => {
-    event.preventDefault()
-    this.state.signinSignup ?
-      this.signinHandler()
-      :
-      _client ?
-        this.clientSignupHandler()
-        :
-        this.laboSignupHandler()
-  }
-
-  async keystoreDownload(_filename, _content) {
-    let element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(_content));
-    element.setAttribute('download', _filename);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  }
-
   render() {
     const { t } = this.props
     return (
@@ -281,7 +191,6 @@ class App extends Component {
                     signupAddress={this.state.signupAddress}
                     signupPrivateKey={this.state.signupPrivateKey}
                     signinSignup={this.state.signinSignup}
-                    showSignupResult={this.state.showSignupResult}
                     laboShowSignupResult={this.state.laboShowSignupResult}
                     signup={() => { this.setState({ signinSignup: !this.state.signinSignup }) }}
                   />

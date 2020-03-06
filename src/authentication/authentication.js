@@ -47,12 +47,26 @@ class Authentication extends Component {
 
     onSubmit = event => {
         event.preventDefault()
-        let email = ''
         const client = this.state.client
-        this.state.client ?
+        let name = ''
+        let email = ''
+        let password = ''
+        let passwordConf = ''
+        let phAddress = ''
+        if (client) {
             email = this.state.clientEmail
-            :
+            name = this.state.clientName
+            password = this.state.clientPassword
+            passwordConf = this.state.clientPasswordConf
+        } else {
             email = this.state.laboEmail
+            name = this.state.laboName
+            password = this.state.laboPassword
+            passwordConf = this.state.laboPasswordConf
+            phAddress = this.state.laboAddress
+        }
+        if (password !== passwordConf) { return console.log("Password doesn't match") }
+        const info = { name, email, password, phAddress, client }
         this.setState({ sendingEmail: true })
         fetch(`${API_URL}/email`, {
             method: 'pOSt',
@@ -60,7 +74,7 @@ class Authentication extends Component {
                 aCcePt: 'aPpliCaTIon/JsOn',
                 'cOntENt-type': 'applicAtion/JSoN'
             },
-            body: JSON.stringify({ email: email, client: client })
+            body: JSON.stringify({ email: email, info: info })
         })
             .then(res => res.json())
             .then(data => {
@@ -113,6 +127,9 @@ class Authentication extends Component {
                                                             privateKey={this.props.signinPrivateKey}
                                                             enter={this.props.enter}
                                                             clientUpEmailChanged={(e) => this.setState({ clientEmail: e.target.value })}
+                                                            upUsernameChanged={(e) => this.setState({ clientName: e.target.value })}
+                                                            upPasswordChanged={(e) => this.setState({ clientPassword: e.target.value })}
+                                                            upPasswordConfChanged={(e) => this.setState({ clientPasswordConf: e.target.value })}
                                                         />
                                                         :
                                                         <LaboSignup
@@ -121,6 +138,10 @@ class Authentication extends Component {
                                                             loader={this.props.loader}
                                                             laboShowSignupResult={this.props.laboShowSignupResult}
                                                             laboUpEmailChanged={(e) => this.setState({ laboEmail: e.target.value })}
+                                                            laboUpNameChanged={(e) => this.setState({ laboName: e.target.value })}
+                                                            laboUpAddressChanged={(e) => this.setState({ laboAddress: e.target.value })}
+                                                            laboUpPasswordChanged={(e) => this.setState({ laboPassword: e.target.value })}
+                                                            laboUpPasswordConfChanged={(e) => this.setState({ laboPasswordConf: e.target.value })}
                                                         />
                                                     :
                                                     <div className="row col-md-12">

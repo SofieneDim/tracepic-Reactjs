@@ -33,7 +33,7 @@ class LaboSignup extends Component {
                                                     id="signup-laboNme"
                                                     placeholder={t('laboName-placeholder')}
                                                     ref={_inputRef => this.laboNameInput = _inputRef}
-                                                    onChange={() => context.laboUpNameChanged & this.props.laboUpNameChanged}
+                                                    onChange={(e) => context.laboUpNameChanged(e) & this.props.laboUpNameChanged(e)}
                                                 />
                                             </div>
                                         </div>,
@@ -45,7 +45,7 @@ class LaboSignup extends Component {
                                                 <input type="text" className="form-control"
                                                     id="signup-laboAddress"
                                                     placeholder={t('laboAddress-placeholder')}
-                                                    onChange={context.laboUpAddressChanged}
+                                                    onChange={(e) => context.laboUpAddressChanged(e) & this.props.laboUpAddressChanged(e)}
                                                 />
                                             </div>
                                         </div>,
@@ -69,7 +69,7 @@ class LaboSignup extends Component {
                                                 <input type="password" className="form-control"
                                                     id="-signup-password"
                                                     placeholder={t('password_placeholder')}
-                                                    onChange={context.laboUpPasswordChanged}
+                                                    onChange={(e) => context.laboUpPasswordChanged(e) & this.props.laboUpPasswordChanged(e)}
                                                 />
                                             </div>
                                         </div>,
@@ -81,7 +81,7 @@ class LaboSignup extends Component {
                                                 <input type="password" className="form-control"
                                                     id="signup-password-cnf"
                                                     placeholder={t('password-conf-placeholder')}
-                                                    onChange={context.laboUpPasswordConfChanged}
+                                                    onChange={(e) => context.laboUpPasswordConfChanged(e) & this.props.laboUpPasswordConfChanged(e)}
                                                 />
                                             </div>
                                         </div>,

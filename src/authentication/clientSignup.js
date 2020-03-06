@@ -28,7 +28,7 @@ class ClientSignup extends Component {
                                                 id="signup-username"
                                                 placeholder={t('username-placeholder')}
                                                 ref={_inputRef => this.userNameInput = _inputRef}
-                                                onChange={context.upUsernameChanged}
+                                                onChange={(e) => context.upUsernameChanged(e) & this.props.upUsernameChanged(e)}
                                             />
                                         </div>
                                     </div>
@@ -52,7 +52,7 @@ class ClientSignup extends Component {
                                             <input type="password" className="form-control"
                                                 id="-signup-password"
                                                 placeholder={t('password_placeholder')}
-                                                onChange={context.upPasswordChanged}
+                                                onChange={(e) => context.upPasswordChanged(e) & this.props.upPasswordChanged(e)}
                                             />
                                         </div>
                                     </div>
@@ -64,7 +64,7 @@ class ClientSignup extends Component {
                                             <input type="password" className="form-control"
                                                 id="signup-password-cnf"
                                                 placeholder={t('password-conf-placeholder')}
-                                                onChange={context.upPasswordConfChanged}
+                                                onChange={(e) => context.upPasswordConfChanged(e) & this.props.upPasswordConfChanged(e)}
                                             />
                                         </div>
                                     </div>
