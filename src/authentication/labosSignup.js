@@ -85,7 +85,7 @@ class LaboSignup extends Component {
                                                 />
                                             </div>
                                         </div>,
-                                        this.props.loader ?
+                                        this.props.loading ?
                                             <div className="col-md-12 centered" key="6">
                                                 <div className="analyse-loader centered" />
                                             </div>

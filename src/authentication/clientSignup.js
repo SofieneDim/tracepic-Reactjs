@@ -68,7 +68,7 @@ class ClientSignup extends Component {
                                             />
                                         </div>
                                     </div>
-                                    {this.props.loader ?
+                                    {this.props.loading ?
                                         <div className="col-md-12 centered">
                                             <div className="analyse-loader centered" />
                                         </div>

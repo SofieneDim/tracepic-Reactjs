@@ -55,9 +55,18 @@ class App extends Component {
 
   async initContract() {
     const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")
-    this.setState({ web3 })
     const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
-    this.setState({ contractInstance })
+    await this.setState({ contractInstance, web3 })
+    if (this.props.userInfo) { this.clientAuthenticated() }
+  }
+
+  clientAuthenticated = async () => {
+    await this.setState({
+      accountAddress: this.props.userInfo.address,
+      accountPrivateKey: this.props.userInfo.privatekey,
+      accountName: this.props.userInfo.name,
+    })
+    await this.authenticated()
   }
 
   async loadAccountInfo() {
@@ -81,14 +90,16 @@ class App extends Component {
     this.setState({ accountAddress: accountInfo.address, accountPrivateKey: accountInfo.privateKey })
     var accountReceipt = ""
     const _isAdmin = await this.state.contractInstance.methods.adminAccounts(accountInfo.address).call()
-    if (_isAdmin) { return this.setState({ adminMode: true, accessApproved: true }) }
+    if (_isAdmin) {
+      return this.setState({ adminMode: true, accessApproved: true })
+    }
     try {
       accountReceipt = await this.state.contractInstance.methods
         .getAccountByAddress(this.state.accountAddress).call()
     } catch (error) {
       return console.error(error);
     }
-    const authorized = await this.checkAccount(accountReceipt)
+    const authorized = await this.checkAccount(accountReceipt[1])
     if (!authorized) { return console.log('Not authorized') }
     this.setState({ accountName: accountReceipt[2] })
     if (accountReceipt[5]) {
@@ -104,7 +115,7 @@ class App extends Component {
     switch (accountState) {
       case 'null':
         console.log("account doesn't exist")
-        return false
+        return true
       case 'pending':
         console.log('Request pending')
         return false
@@ -184,6 +195,7 @@ class App extends Component {
                   }
                 }>
                   <Authentication
+                    signin={() => this.signinHandler()}
                     enter={this.authenticated}
                     loader={this.state.signupLoad}
                     signinAddress={this.state.accountAddress}
@@ -229,10 +241,6 @@ class App extends Component {
                     reloadAccountInfo={this.loadAccountInfo.bind(this)}
                   />
             }
-            {/* <AdminTemplate
-              web3={this.state.web3}
-              contractInstance={this.state.contractInstance}
-            />*/}
           </LanguagesContext.Provider >
         </div >
       </div>
@@ -255,9 +263,9 @@ class App extends Component {
     this.setState({ [key]: value })
   }
 
-  authenticated = () => {
+  authenticated = async () => {
     this.usersMode()
-    this.loadAccountInfo()
+    await this.loadAccountInfo()
   }
 
   setAccountInfo = async (address, privatekey) => {

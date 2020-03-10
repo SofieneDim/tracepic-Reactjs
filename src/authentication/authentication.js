@@ -23,6 +23,8 @@ class Authentication extends Component {
         sendingEmail: false,
         clientEmail: '',
         laboEmail: '',
+        emailSent: false,
+        msgRecieved: '',
     }
 
     clientSignup = () => {
@@ -35,18 +37,23 @@ class Authentication extends Component {
         this.setState({ decided: true, client: true })
     }
 
-    wakeServer = () => {
-        fetch(`${API_URL}/wake-up`)
+    wakeServer = async () => {
+        await fetch(`${API_URL}/wake-up`)
             .then(res => res.json())
             .then(() => {
                 this.setState({ loading: false })
                 console.log('connected')
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
     }
 
     onSubmit = event => {
         event.preventDefault()
+
+        if (this.props.signinSignup) {
+            return this.props.signin()
+        }
+        this.setState({ loading: true })
         const client = this.state.client
         let name = ''
         let email = ''
@@ -65,7 +72,10 @@ class Authentication extends Component {
             passwordConf = this.state.laboPasswordConf
             phAddress = this.state.laboAddress
         }
-        if (password !== passwordConf) { return console.log("Password doesn't match") }
+        if (password !== passwordConf) {
+            this.setState({ loading: false })
+            return console.log("Password doesn't match")
+        }
         const info = { name, email, password, phAddress, client }
         this.setState({ sendingEmail: true })
         fetch(`${API_URL}/email`, {
@@ -79,7 +89,7 @@ class Authentication extends Component {
             .then(res => res.json())
             .then(data => {
                 console.log('data:', data)
-                this.setState({ sendingEmail: false })
+                this.setState({ msgRecieved: data.msg, sendingEmail: false, loading: false, emailSent: true })
             })
             .catch(err => console.log(err))
     }
@@ -110,89 +120,94 @@ class Authentication extends Component {
                                     <img src={signinImage} alt="" />
                                 </div>
                             </div>
-                            <div className="col-md-8">
-                                <form onSubmit={this.props.click}>
-                                    <div>
-                                        <div className="row">
-                                            <div className="col-md-1"></div>
-                                            {this.props.signinSignup ?
-                                                <Signin />
-                                                :
-                                                this.state.decided ?
-                                                    this.state.client ?
-                                                        <ClientSignup
-                                                            loader={this.props.loader}
-                                                            showSignupResult={this.props.showSignupResult}
-                                                            address={this.props.signinAddress}
-                                                            privateKey={this.props.signinPrivateKey}
-                                                            enter={this.props.enter}
-                                                            clientUpEmailChanged={(e) => this.setState({ clientEmail: e.target.value })}
-                                                            upUsernameChanged={(e) => this.setState({ clientName: e.target.value })}
-                                                            upPasswordChanged={(e) => this.setState({ clientPassword: e.target.value })}
-                                                            upPasswordConfChanged={(e) => this.setState({ clientPasswordConf: e.target.value })}
-                                                        />
-                                                        :
-                                                        <LaboSignup
-                                                            address={this.props.signupAddress}
-                                                            pivateKey={this.props.signupPrivateKey}
-                                                            loader={this.props.loader}
-                                                            laboShowSignupResult={this.props.laboShowSignupResult}
-                                                            laboUpEmailChanged={(e) => this.setState({ laboEmail: e.target.value })}
-                                                            laboUpNameChanged={(e) => this.setState({ laboName: e.target.value })}
-                                                            laboUpAddressChanged={(e) => this.setState({ laboAddress: e.target.value })}
-                                                            laboUpPasswordChanged={(e) => this.setState({ laboPassword: e.target.value })}
-                                                            laboUpPasswordConfChanged={(e) => this.setState({ laboPasswordConf: e.target.value })}
-                                                        />
+                            {!this.state.emailSent ?
+                                <div className="col-md-8">
+                                    <form onSubmit={this.props.click}>
+                                        <div>
+                                            <div className="row">
+                                                <div className="col-md-1"></div>
+                                                {this.props.signinSignup ?
+                                                    <Signin />
                                                     :
-                                                    <div className="row col-md-12">
-                                                        <div className="col-md-12">
-                                                            <h3 id="signup-suggestion">{t('signupAs')}</h3>
+                                                    this.state.decided ?
+                                                        this.state.client ?
+                                                            <ClientSignup
+                                                                loading={this.props.loading}
+                                                                showSignupResult={this.props.showSignupResult}
+                                                                address={this.props.signinAddress}
+                                                                privateKey={this.props.signinPrivateKey}
+                                                                enter={this.props.enter}
+                                                                clientUpEmailChanged={(e) => this.setState({ clientEmail: e.target.value })}
+                                                                upUsernameChanged={(e) => this.setState({ clientName: e.target.value })}
+                                                                upPasswordChanged={(e) => this.setState({ clientPassword: e.target.value })}
+                                                                upPasswordConfChanged={(e) => this.setState({ clientPasswordConf: e.target.value })}
+                                                            />
+                                                            :
+                                                            <LaboSignup
+                                                                address={this.props.signupAddress}
+                                                                pivateKey={this.props.signupPrivateKey}
+                                                                loading={this.state.loading}
+                                                                laboShowSignupResult={this.props.laboShowSignupResult}
+                                                                laboUpEmailChanged={(e) => this.setState({ laboEmail: e.target.value })}
+                                                                laboUpNameChanged={(e) => this.setState({ laboName: e.target.value })}
+                                                                laboUpAddressChanged={(e) => this.setState({ laboAddress: e.target.value })}
+                                                                laboUpPasswordChanged={(e) => this.setState({ laboPassword: e.target.value })}
+                                                                laboUpPasswordConfChanged={(e) => this.setState({ laboPasswordConf: e.target.value })}
+                                                            />
+                                                        :
+                                                        <div className="row col-md-12">
+                                                            <div className="col-md-12">
+                                                                <h3 id="signup-suggestion">{t('signupAs')}</h3>
+                                                            </div>
+                                                            <div className="col-md-6 centered">
+                                                                <h4>{t('Labo')}</h4>
+                                                            </div>
+                                                            <div className="col-md-6 centered">
+                                                                <h4>{t('Client')}</h4>
+                                                            </div>
+                                                            <div className="col-md-6 centered">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => this.clientSignup()}
+                                                                    id="signup-labo"
+                                                                ></button>
+                                                            </div>
+                                                            <div className="col-md-6 centered">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => this.laboSignup()}
+                                                                    id="signup-client"
+                                                                ></button>
+                                                            </div>
                                                         </div>
-                                                        <div className="col-md-6 centered">
-                                                            <h4>{t('Labo')}</h4>
-                                                        </div>
-                                                        <div className="col-md-6 centered">
-                                                            <h4>{t('Client')}</h4>
-                                                        </div>
-                                                        <div className="col-md-6 centered">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => this.clientSignup()}
-                                                                id="signup-labo"
-                                                            ></button>
-                                                        </div>
-                                                        <div className="col-md-6 centered">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => this.laboSignup()}
-                                                                id="signup-client"
-                                                            ></button>
-                                                        </div>
-                                                    </div>
-                                            }
-                                            <div className="col-md-1"></div>
+                                                }
+                                                <div className="col-md-1"></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="row modal-footer">
-                                        <div className='col-md-3'>
-                                            <button className="btn btn-primary" type="button"
-                                                style={{ backgroundColor: '#3384CC', float: 'left' }} onClick={this.props.signup}
-                                            >{this.props.signinSignup ? t('goToSignup') : t('goToSignin')}</button>
+                                        <div className="row modal-footer">
+                                            <div className='col-md-3'>
+                                                <button className="btn btn-primary" type="button"
+                                                    style={{ backgroundColor: '#3384CC', float: 'left' }} onClick={this.props.signup}
+                                                >{this.props.signinSignup ? t('goToSignup') : t('goToSignin')}</button>
+                                            </div>
+                                            <div className='col-md-8'>
+                                                <button className="btn btn-primary signin_botton" type="submit"
+                                                    onClick={this.onSubmit}
+                                                    style={{ backgroundColor: '#3333CC', float: 'right' }}
+                                                >{t('connect')}</button>
+                                            </div>
                                         </div>
-                                        <div className='col-md-8'>
-                                            <button className="btn btn-primary signin_botton" type="submit"
-                                                onClick={this.onSubmit}
-                                                // onClick={this.state.client ? (e) => this.props.submit(e, true) : (e) => this.props.submit(e, false)}
-                                                style={{ backgroundColor: '#3333CC', float: 'right' }}
-                                            >{t('connect')}</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
+                                :
+                                <div className="col-md-8 centered" style={{ marginTop: '10px' }}>
+                                    <h1>{this.state.msgRecieved}.</h1>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 }
