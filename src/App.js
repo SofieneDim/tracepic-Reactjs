@@ -54,7 +54,7 @@ class App extends Component {
   }
 
   async initContract() {
-    const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")
+    const web3 = new Web3(Web3.givenProvider || "https://tracepic-backend.trimakus.com/geth")
     const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
     await this.setState({ contractInstance, web3 })
     if (this.props.userInfo) { this.clientAuthenticated() }
@@ -99,8 +99,10 @@ class App extends Component {
     } catch (error) {
       return console.error(error);
     }
-    const authorized = await this.checkAccount(accountReceipt[1])
-    if (!authorized) { return console.log('Not authorized') }
+    if (accountReceipt[1] == 0x0) {
+      const authorized = await this.checkAccount(accountReceipt[1])
+      if (!authorized) { return console.log('Not authorized') }
+    }
     this.setState({ accountName: accountReceipt[2] })
     if (accountReceipt[5]) {
       this.labosMode()
@@ -115,7 +117,7 @@ class App extends Component {
     switch (accountState) {
       case 'null':
         console.log("account doesn't exist")
-        return true
+        return false
       case 'pending':
         console.log('Request pending')
         return false

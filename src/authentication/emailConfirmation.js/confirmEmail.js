@@ -22,10 +22,11 @@ export default class Confirm extends Component {
         await fetch(`${API_URL}/email/confirm/${id}`)
             .then(res => res.json())
             .then(data => {
-                console.log('data:', data)
+                console.log('data:', data.info)
                 if (data.msg === "Your email was already confirmed") {
                     return console.log("Your email was already confirmed")
                 }
+                if (data.info.name == undefined) { return console.log('no info') }
                 this.signupHandler(data.info)
             })
             .catch(err => console.error(err))
@@ -43,6 +44,7 @@ export default class Confirm extends Component {
     }
 
     async clientSignupHandler(user) {
+        console.log('user:', user)
         this.setState({ signupLoad: true })
         const account = await this.props.web3.eth.accounts.create()
         this.setState({ accountAddress: account.address, accountPrivateKey: account.privateKey, accountName: user.name })

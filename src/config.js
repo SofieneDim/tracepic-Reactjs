@@ -1,1 +1,1 @@
-export const API_URL = 'http://51.178.53.74:8080'//'http://localhost:8080'
+export const API_URL = 'http://localhost:8080'//'https://tracepic-node.trimakus.com'

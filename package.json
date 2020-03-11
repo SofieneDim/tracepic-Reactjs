@@ -23,6 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy:dev": "rsync -avzhe ssh --progress ./build/* root@51.178.53.74:/root/frontEndTemplate",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

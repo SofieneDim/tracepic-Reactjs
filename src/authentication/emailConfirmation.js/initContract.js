@@ -15,7 +15,7 @@ class Contract extends Component {
     }
 
     async initContract() {
-        const web3 = new Web3(Web3.givenProvider || "http://51.178.53.74:7755")
+        const web3 = new Web3(Web3.givenProvider || "https://tracepic-backend.trimakus.com/geth")
         const contractInstance = await new web3.eth.Contract(TRACEPIC_ABI, TRACEPIC_ADDRESS)
         await this.setState({ contractInstance, web3 })
     }

@@ -73,7 +73,6 @@ class signin extends Component {
                                             />
                                         </div >
                                     </div >
-
                                     <a href="#" onClick={() => this.setState({ recoverPrivateKey: true })}> {t('privateKeyForgotten')}</a >
                                 </div >
                                 :

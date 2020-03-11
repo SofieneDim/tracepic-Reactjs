@@ -122,7 +122,7 @@ class Authentication extends Component {
                             </div>
                             {!this.state.emailSent ?
                                 <div className="col-md-8">
-                                    <form onSubmit={this.props.click}>
+                                    <form onSubmit={this.onSubmit}>
                                         <div>
                                             <div className="row">
                                                 <div className="col-md-1"></div>
