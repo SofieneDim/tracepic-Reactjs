@@ -94,8 +94,8 @@ class LaboSignup extends Component {
                             }
                         </AuthContext.Consumer>
                         :
-                        <div className="row centered" style={{ marginTop: '20px' }}>
-                            <h3 className="col-md-12 centered" style={{ color: 'green', marginTop: '20px' }}>{t('laboSignupMsg1')}</h3>
+                        <div className="row centered" style={{ marginTop: '10px' }}>
+                            <h3 className="col-md-12 centered" style={{ color: 'green', marginTop: '0px' }}>{t('laboSignupMsg1')}</h3>
                             <h4 className="col-md-12 centered" style={{ color: 'green' }}>{t('laboSignupMsg2')}</h4>
                             <h4 className="col-md-12 centered" style={{ marginTop: '20px' }}>{t('address')}</h4>
                             <label className="col-md-12 centered" style={{ marginTop: '20px' }}>{this.props.address}</label>

@@ -44,12 +44,15 @@ class UsersTemplate extends Component {
         const selfBougthAnalyses = []
         let analysesLeftIndex = []
         let analysesRightIndex = []
+        let sort = false
         for (let i = 0; i < analyses.length; i++) {
             if (analyses[i].secret == 0 && analyses[i].buyer == 0x0) {
-                if (i % 2 === 0) {
+                if (sort) {
                     analysesLeftIndex.push(analyses[i])
+                    sort = !sort
                 } else {
                     analysesRightIndex.push(analyses[i])
+                    sort = !sort
                 }
             }
             if (analyses[i].buyer === this.props.accountAddress) {

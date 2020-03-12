@@ -59,7 +59,7 @@ class postAnalyse extends Component {
                                             <div className="form-group centered" style={{ marginTop: '20px' }}>
                                                 <input type="file" onChange={this.props.captureFile} />
                                                 {
-                                                    !this.props.load ?
+                                                    this.props.load ?
                                                         <div className="loader"></div>
                                                         :
                                                         null

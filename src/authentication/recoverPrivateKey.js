@@ -112,7 +112,7 @@ class RecoverPrivateKey extends Component {
                             <div className="col-md-12 mb-3 centered">
                                 <p />{this.state.privateKeyResult}
                             </div>
-                            <div className="col-md-12 mb-3 centered">
+                            {/* <div className="col-md-12 mb-3 centered">
                                 <button
                                     className="btn btn-success"
                                     onClick={() => this.props.enter(this.state.addressResult, this.state.privateKeyResult)}
@@ -120,7 +120,7 @@ class RecoverPrivateKey extends Component {
                                 >
                                     {this.context.t('enter')}
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                         : null
                 }

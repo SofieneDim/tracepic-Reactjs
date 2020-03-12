@@ -100,9 +100,11 @@ class App extends Component {
       return console.error(error);
     }
     if (accountReceipt[1] == 0x0) {
-      const authorized = await this.checkAccount(accountReceipt[1])
+      const authorized = await this.checkLaboAccount(accountReceipt[1])
       if (!authorized) { return console.log('Not authorized') }
     }
+    const authorized = this.checkAuth(accountReceipt)
+    //if (!authorized) { return console.log('Not authorized') }
     this.setState({ accountName: accountReceipt[2] })
     if (accountReceipt[5]) {
       this.labosMode()
@@ -112,7 +114,7 @@ class App extends Component {
     this.loadAccountInfo()
   }
 
-  checkAccount = async (accountReceipt) => {
+  checkLaboAccount = async () => {
     const accountState = await this.state.contractInstance.methods.checkRequest(this.state.accountAddress).call()
     switch (accountState) {
       case 'null':
@@ -128,24 +130,29 @@ class App extends Component {
         console.log('Request refused')
         return false
     }
+  }
+
+  checkAuth = accountReceipt => {
     if (accountReceipt[1] == 0x0) {
-      return console.log("account doesn't exist")
+      console.log("account doesn't exist")
+      return false;
     }
     if (this.state.signinEmail !== accountReceipt[3]) {
       console.log("wrong email address")
-      return false
+      return false;
     }
     if (this.state.signinPassword !== accountReceipt[4]) {
       console.log("wrong password")
-      return false
+      return false;
     }
     if (this.state.signinPassword !== accountReceipt[4]) {
       console.log("wrong password")
-      return false
+      return false;
     }
+    return true;
   }
 
-  render() {
+  render = () => {
     const { t } = this.props
     return (
       <div>
@@ -198,7 +205,7 @@ class App extends Component {
                 }>
                   <Authentication
                     signin={() => this.signinHandler()}
-                    enter={this.authenticated}
+                    enter={() => this.authenticated()}
                     loader={this.state.signupLoad}
                     signinAddress={this.state.accountAddress}
                     signinPrivateKey={this.state.accountPrivateKey}
@@ -229,7 +236,7 @@ class App extends Component {
                     accountName={this.state.accountName}
                     privateKey={this.state.privateKey}
                     reloadAnalyses={this.loadAnalyses.bind(this)}
-                    setAccountInfo={this.setAccountInfo}
+                    setBalance={(balance) => this.setBalance(balance)}
                   />
                   :
                   <UsersTemplate
@@ -249,28 +256,18 @@ class App extends Component {
     )
   }
 
-  labosMode() {
-    this.labosMode = true
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
-
-  usersMode() {
-    this.labosMode = false
-    this.setState({ accessApproved: true })
-    this.loadAnalyses()
-  }
-
   signinInputChanged(key, value) {
     this.setState({ [key]: value })
   }
 
   authenticated = async () => {
     this.usersMode()
-    await this.loadAccountInfo()
+    //await this.loadAccountInfo()
+    console.log('accountAddress:', this.state.accountAddress)
   }
 
   setAccountInfo = async (address, privatekey) => {
+    console.log('accountAddress:', this.state.accountAddress)
     await this.setState({ accountAddress: address, accountPrivateKey: privatekey })
     this.loadAccountInfo()
     let accountReceipt = []
@@ -288,7 +285,19 @@ class App extends Component {
     }
   }
 
-  setAccountInfo = (_balance) => {
+  labosMode() {
+    this.labosMode = true
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
+  usersMode() {
+    this.labosMode = false
+    this.setState({ accessApproved: true })
+    this.loadAnalyses()
+  }
+
+  setBalance = (_balance) => {
     this.setState({ balance: _balance })
   }
 }

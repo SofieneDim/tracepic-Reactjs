@@ -49,7 +49,6 @@ class Authentication extends Component {
 
     onSubmit = event => {
         event.preventDefault()
-
         if (this.props.signinSignup) {
             return this.props.signin()
         }
@@ -127,12 +126,14 @@ class Authentication extends Component {
                                             <div className="row">
                                                 <div className="col-md-1"></div>
                                                 {this.props.signinSignup ?
-                                                    <Signin />
+                                                    <Signin
+                                                        enter={() => { this.props.enter() }}
+                                                    />
                                                     :
                                                     this.state.decided ?
                                                         this.state.client ?
                                                             <ClientSignup
-                                                                loading={this.props.loading}
+                                                                loading={this.state.loading}
                                                                 showSignupResult={this.props.showSignupResult}
                                                                 address={this.props.signinAddress}
                                                                 privateKey={this.props.signinPrivateKey}
@@ -194,7 +195,7 @@ class Authentication extends Component {
                                                 <button className="btn btn-primary signin_botton" type="submit"
                                                     onClick={this.onSubmit}
                                                     style={{ backgroundColor: '#3333CC', float: 'right' }}
-                                                >{t('connect')}</button>
+                                                >{t(this.props.signinSignup ? 'signin' : 'signup')}</button>
                                             </div>
                                         </div>
                                     </form>

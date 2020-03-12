@@ -15,6 +15,8 @@ export default class Confirm extends Component {
     state = {
         confirming: true,
         isClientAuthenticated: false,
+        progress: 'Confirmation in progress',
+        loading: true
     }
 
     componentDidMount = async () => {
@@ -22,12 +24,11 @@ export default class Confirm extends Component {
         await fetch(`${API_URL}/email/confirm/${id}`)
             .then(res => res.json())
             .then(data => {
-                console.log('data:', data.info)
-                if (data.msg === "Your email was already confirmed") {
-                    return console.log("Your email was already confirmed")
+                if (data.msg === "Your email is confirmed!") {
+                    return this.signupHandler(data.info)
+                } else {
+                    return this.setState({ progress: data.msg, loading: false })
                 }
-                if (data.info.name == undefined) { return console.log('no info') }
-                this.signupHandler(data.info)
             })
             .catch(err => console.error(err))
     }
@@ -142,16 +143,19 @@ export default class Confirm extends Component {
                                 <div className="col-md-8">
                                     {!this.state.showSignupResult ?
                                         this.state.confirming ?
-                                            <div className="row" style={{ marginTop: '1%' }}>
+                                            <div className="row" style={{ marginTop: '20%' }}>
                                                 <h1 className="centered col-md-12" style={{ color: 'rgb(49, 54, 203, 0.9)' }}>
-                                                    Confirmation in progress
-                                        </h1>
-                                                <div className="centered col-md-12" style={{ marginTop: '20px' }}>
-                                                    <div className="loader"></div>
-                                                </div>
+                                                    {this.state.progress}
+                                                </h1>
+                                                {this.state.loading ?
+                                                    <div className="centered col-md-12" style={{ marginTop: '20px' }}>
+                                                        <div className="loader"></div>
+                                                    </div>
+                                                    : ''
+                                                }
                                             </div>
                                             :
-                                            <div className="row" style={{ marginTop: '10%' }}>
+                                            <div className="row" style={{ marginTop: '0%' }}>
                                                 <h2 className="col-md-12 centered" style={{ color: 'blue', marginTop: '20px' }}>Your email has been successfully verified.</h2>
                                                 <h3 className="col-md-12 centered" style={{ color: 'green', marginTop: '20px' }}>We successfully received your demand,</h3>
                                                 <h4 className="col-md-12 centered" style={{ color: 'green' }}>and we will approve it as soon as possible</h4>
@@ -174,7 +178,7 @@ export default class Confirm extends Component {
                                                     onClick={() => this.setState({ isClientAuthenticated: true })}
                                                 >
                                                     Enter
-                                            </button>
+                                                </button>
                                             </div>
                                         </div>
                                     }

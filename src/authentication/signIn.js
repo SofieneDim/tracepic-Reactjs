@@ -77,7 +77,10 @@ class signin extends Component {
                                 </div >
                                 :
                                 <RecoverPrivateKey
-                                    enter={(address, privatekey) => context.setAccountInfo(address, privatekey)}
+                                    enter={(address, privatekey) => {
+                                        context.setAccountInfo(address, privatekey);
+                                        this.props.enter();
+                                    }}
                                     cancel={() => this.setState({ recoverPrivateKey: false })}
                                 />
                             }

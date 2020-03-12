@@ -33,7 +33,7 @@ class labosTemplate extends Component {
             sendEthValue: "",
             sendEthComplete: false,
             sendEthLoad: false,
-            ipfsUploadLoad: false
+            ipfsUploadLoad: false,
         }
     }
 
@@ -147,6 +147,8 @@ class labosTemplate extends Component {
 
     captureFileHandler = async (event) => {
         event.preventDefault()
+        console.log('begin')
+        this.setState({ ipfsUploadLoad: true })
         const file = event.target.files[0]
         const reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
@@ -156,9 +158,9 @@ class labosTemplate extends Component {
     }
 
     async uploadFileToIPFS(fileBuffer) {
-        this.setState({ ipfsUploadLoad: true })
         await ipfs.add(fileBuffer, (error, ipfsHash) => {
             const fileLink = "https://ipfs.infura.io/ipfs/" + ipfsHash[0].hash
+            console.log('finish')
             this.setState({ analyseValue: fileLink, postSubmitDisable: false, ipfsUploadLoad: false })
             if (error) {
                 this.setState({ ipfsUploadLoad: false })
@@ -183,7 +185,7 @@ class labosTemplate extends Component {
                 let clientBalance = await this.props.web3.eth.getBalance(this.state.sendEthTo)
                 clientBalance = this.props.web3.utils.fromWei(clientBalance, "ether") + " ETH"
                 const labosBalance = await this.props.web3.eth.getBalance(this.props.accountAddress)
-                this.props.setAccountInfo(this.props.web3.utils.fromWei(labosBalance, "ether"))
+                this.props.setBalance(this.props.web3.utils.fromWei(labosBalance, "ether"))
                 this.setState({ clientBalance, sendEthComplete: true, sendEthLoad: false })
             })
             .catch(err => {
@@ -330,7 +332,6 @@ class labosTemplate extends Component {
                     </div>
                     : null
                 }
-
                 {this.state.searchAnalyseResult}
                 {this.state.showAnalyse ?
                     this.state.showSelfPosted ?
@@ -369,7 +370,6 @@ class labosTemplate extends Component {
                                 captureFile={this.captureFileHandler}
                                 submitDisable={this.state.postSubmitDisable}
                             />
-
                         </div>
                         <div className="col-md-2"></div>
                     </div>
